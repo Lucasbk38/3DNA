@@ -6,8 +6,8 @@ class Fitness():
     def __init__(self):
         pass
 
-    def evaluate(self, rot_table: Individu, traj: Traj3D, seq: str) -> float:
+    def evaluate(self, rot_table: Individu, traj: Traj3D, seq: str) -> np.floating:
         new_seq = seq + seq[0]
         assert(new_seq[0] == new_seq [-1])
 
-        return np.linalg.norm(traj.compute(new_seq,rot_table),2) #Norm of the last point of the DNA (we search to minimize it)
+        return np.linalg.norm(traj.compute(new_seq,rot_table), 2) #Norm of the last point of the DNA (we search to minimize it)
