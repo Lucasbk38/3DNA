@@ -38,8 +38,8 @@ class Tournament(Selection):
         
     # Sélection par tournoi
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
-        selected = []
-        size_of_selection = len(individus) // 2
+        selected: list[RotTable] = []
+        size_of_selection = len(individus) // 2 - 1
 
         for _ in range(size_of_selection):
             # Choisir 2 individus au hasard
@@ -51,7 +51,7 @@ class Tournament(Selection):
             else:
                 selected.append(individus[p2])
 
-        return selected
+        return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected
 
 
 class Roulette(Selection):
@@ -64,9 +64,9 @@ class Roulette(Selection):
     # Sélection par roulette
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
         expFitness = np.exp(np.array(fitness) / 100)
-        indices = np.random.choice(len(individus), len(individus)//2, p=expFitness / expFitness.sum())
+        indices = np.random.choice(len(individus), len(individus)//2 - 1, p=expFitness / expFitness.sum())
 
-        return [individus[i] for i in indices]
+        return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + [individus[i] for i in indices]
 
 
 class Rank(Selection):
@@ -78,8 +78,7 @@ class Rank(Selection):
     
     # Sélection par rang
     def select(self, individus: list[RotTable], fitness: list[float]):
-        
-        selected = []
+        selected: list[RotTable] = []
         size_of_selection = len(individus) // 2
 
         # Trier les individus par fitness croissante (le pire en premier)
