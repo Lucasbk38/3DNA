@@ -41,11 +41,11 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
             if benchmark:
                 best_indiv.append(min(eval))
         
-        selected = selection.select()
-        crossed = crossover.make_full_population(selected, generation_size)
-        mutated = mutation.mutate_population(crossed)
+        selected = selection.select(currentGeneration)
+        crossed = crossover.make_full_population(selected, generation_size - len(selected))
+        mutated = mutation.mutate_population(selected)
 
-        currentGeneration = mutated
+        currentGeneration = crossed + mutated
     
 
     best_fitness = inf
