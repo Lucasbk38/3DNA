@@ -2,8 +2,8 @@ from gen.fitness import *
 from gen.crossover import *
 from gen.mutation import *
 from gen.selection import *
-from dna.Traj3D import Traj3D
 from math import inf
+from dna.Traj3D import Traj3D
 import matplotlib.pyplot as plt
 from dna.RotTable import RotTable
 
@@ -26,7 +26,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     eval = [0. for _ in range(generation_size)]
 
     for g in range(num_generations):
-        best_fitness = inf
+        best_fitness = -inf
         for i in range(generation_size):
             eval[i] = fitness.evaluate(currentGeneration[i], traj3d, seq)
 
@@ -38,12 +38,12 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
         
         selected = selection.select(currentGeneration, eval)
         crossed = crossover.make_full_population(selected, generation_size - len(selected))
-        mutated = mutation.mutate_population(selected)
+        mutated = mutation.mutate_population(crossed)
 
-        currentGeneration = crossed + mutated
+        currentGeneration = selected + mutated
     
 
-    best_fitness = inf
+    best_fitness = -inf
     best_individual_index = 0
     for i in range(generation_size):
         f = fitness.evaluate(currentGeneration[i], traj3d, seq)
@@ -65,4 +65,4 @@ def benchmark_selection_method(num_generations: int, generation_size: int, seq_f
     plt.legend()
     plt.show()
 
-genetic_algorithm(5, 10, "data/nothing.fasta", Elitism(), GaussianAdditiveMutation(), True)
+genetic_algorithm(16, 16, "data/plasmid_8k.fasta", Elitism(), GaussianAdditiveMutation(), True)
