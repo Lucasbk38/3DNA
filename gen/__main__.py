@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from dna.RotTable import RotTable
 
 
-def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, benchmark = False):
+def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection_method: str, benchmark = False):
     fitness = Fitness()
     crossover = Crossover()
     mutation = GaussianMultiplicativeMutation()
@@ -32,9 +32,9 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
         for i in range(generation_size):
             eval[i] = fitness.evaluate(currentGeneration[i], traj3d, seq)
             if benchmark:
-                best_indiv.append(min(eval))
+                best_indiv.append(max(eval))
         
-        selected = selection.select(currentGeneration)
+        selected = selection.select(currentGeneration, selection_method)
         crossed = crossover.make_full_population(selected, generation_size - len(selected))
         mutated = mutation.mutate_population(selected)
 
@@ -50,6 +50,12 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
             best_individual_index = i
 
     if benchmark:
-        plt.plot(list(range(num_generations),best_indiv))
-        plt.show()
+        plt.plot(list(range(num_generations)),best_indiv,label = f'{selection_method}')
     return currentGeneration[best_individual_index], best_fitness
+
+def benchmark_selection_method(num_generations: int, generation_size: int, seq_filename: str):
+    selection = Selection()
+    for method in selection.method():
+        genetic_algorithm(num_generations,generation_size,seq_filename,method,True)
+    plt.legend()
+    plt.show()
