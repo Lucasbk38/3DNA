@@ -31,10 +31,14 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     for g in range(num_generations):
         for i in range(generation_size):
             eval[i] = fitness.evaluate(currentGeneration[i], traj3d, seq)
-            if benchmark:
-                best_indiv.append(max(eval))
+
+            if(benchmark and best_fitness < eval[i]):
+                best_fitness = eval[i]
+
+        if(benchmark):
+            print(f"generation: {g}, best fitness {best_fitness}")
         
-        selected = selection.select(currentGeneration, selection_method)
+        selected = selection.select(currentGeneration, eval)
         crossed = crossover.make_full_population(selected, generation_size - len(selected))
         mutated = mutation.mutate_population(selected)
 
@@ -45,12 +49,13 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     best_individual_index = 0
     for i in range(generation_size):
         f = fitness.evaluate(currentGeneration[i], traj3d, seq)
-        if f < best_fitness:
+        if f > best_fitness:
             best_fitness = f
             best_individual_index = i
+    
+    if(benchmark):
+        print(f"last generation, best fitness: {best_fitness}")
 
-    if benchmark:
-        plt.plot(list(range(num_generations)),best_indiv,label = f'{selection_method}')
     return currentGeneration[best_individual_index], best_fitness
 
 def benchmark_selection_method(num_generations: int, generation_size: int, seq_filename: str):

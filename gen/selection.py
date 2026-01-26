@@ -1,29 +1,73 @@
-from individu import Individu
+from dna.RotTable import RotTable
 from fitness import Fitness
 import random
+from abc import ABC, abstractmethod
 
-class Selection():
-    def __init__(self):
-        self.methods = {
-            "elitism": self.elitism,
-            "roulette": self.roulette,
-            "tournament": self.tournament,
-            "rank": self.rank
-        }
-    
-    def select(self, individus: list[Individu], method: str) -> list[Individu]:
-        if method not in self.methods:
-            raise ValueError(f"Méthode de sélection inconnue : {method}")
-        return self.methods[method](individus)
+class Selection(ABC):
+    @abstractmethod
+    def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
+        pass
+
+class Elitism(Selection):
+    # Séléction par elimination des plus faibles
+    def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
+
+        # Trier les individus par fitness décroissante
+        individus_sorted = sorted(range(len(individus)), key=lambda i: fitness[i], reverse=True)
         
+        # Garder la moitié des meilleurs
+        half = len(individus_sorted) // 2
+        return [individus[i] for i in individus_sorted[:half]]
+
+class Tournament(Selection):
+    # Séléction par tournoi
+    def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
+        selected = []
+        size_of_selection = len(individus) // 2
+
+        for _ in range(size_of_selection):
+            # Choisir 2 individus au hasard
+            p1 = random.randint(0, len(individus) - 1)
+            p2 = random.randint(0, len(individus) - 1)
+            # Prendre le meilleur du tournoi
+            if fitness[p1] > fitness[p2]:
+                selected.append(individus[p1])
+            else:
+                selected.append(individus[p2])
+
+        return selected
+
+
+class Roulette(Selection):
+    # Séléction par roulette
+    def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
+        selected = []
+        size_of_selection = len(individus) // 2
+
+        # Calculer la somme des fitness
+        sum_fitness = sum(fitness)
+
+        for _ in range(size_of_selection):
+            # Choisir un individu au hasard
+            roulette_choisi = random.uniform(0, sum_fitness)
+            cumul_fitness = 0
+            for i in range(fitness):
+                cumul_fitness += fitness[i]
+                if cumul_fitness >= roulette_choisi:
+                    selected.append(individus[i])
+                    break
+        return selected
+
+
+class Rank(Selection):
     # Séléction par rang
-    def rank(self, individus: list[Individu]) -> list[Individu]:
+    def selection(self, individus: list[RotTable], fitness: list[float]):
         
         selected = []
         size_of_selection = len(individus) // 2
 
         # Trier les individus par fitness croissante (le pire en premier)
-        individus_sorted = sorted(individus, key=lambda ind: ind.fitness)
+        individus_sorted = sorted(range(len(individus)), key=lambda i: fitness[i])
 
         # Attribuer un rang à chaque individu (1 = pire, N = meilleur)
         N = len(individus_sorted)
@@ -38,53 +82,7 @@ class Selection():
             for ind, rank in zip(individus_sorted, ranks):
                 cumul += rank
                 if cumul >= r:
-                    selected.append(ind)
+                    selected.append(individus[ind])
                     break
 
         return selected
-
-    # Séléction par tournoi
-    def tournament(self, individus: list[Individu]) -> list[Individu]:
-
-        selected = []
-        size_of_selection = len(individus) // 2
-
-        for _ in range(size_of_selection):
-            # Choisir 2 individus au hasard
-            concurrents = random.sample(individus, 2)
-            # Prendre le meilleur du tournoi
-            gagnant = max(concurrents, key=lambda ind: ind.fitness)
-            selected.append(gagnant)
-
-        return selected
-
-    # Séléction par roulette
-    def roulette(self, individus: list[Individu]) -> list[Individu]:
-
-        selected = []
-        size_of_selection = len(individus) // 2
-
-        # Calculer la somme des fitness
-        sum_fitness = sum(ind.fitness for ind in individus)
-
-        for _ in range(size_of_selection):
-            # Choisir un individu au hasard
-            roulette_choisi = random.uniform(0, sum_fitness)
-            cumul_fitness = 0
-            for ind in individus:
-                cumul_fitness += ind.fitness
-                if cumul_fitness >= roulette_choisi:
-                    selected.append(ind)
-                    break
-        return selected
-
-
-    # Séléction par elimination des plus faibles
-    def elitism(self, individus: list[Individu]) -> list[Individu]:
-
-        # Trier les individus par fitness décroissante
-        individus_sorted = sorted(individus, key=lambda ind: ind.fitness, reverse=True)
-        
-        # Garder la moitié des meilleurs
-        half = len(individus_sorted) // 2
-        return individus_sorted[:half]
