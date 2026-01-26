@@ -1,6 +1,6 @@
 from gen.fitness import Fitness
 from gen.crossover import Crossover
-from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, Mutation
+from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation
 from gen.selection import Roulette, Rank, Tournament, Elitism, Selection
 from math import inf
 from dna.Traj3D import Traj3D

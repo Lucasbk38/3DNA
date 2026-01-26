@@ -6,7 +6,7 @@ import numpy as np
 
 class Mutation(ABC):
     @abstractmethod
-    def mutateValue (self, e: float) -> float:
+    def mutateValue (self, e: float, delta: float) -> float:
         pass
 
     @abstractmethod
@@ -14,7 +14,7 @@ class Mutation(ABC):
         pass
 
     def mutate(self, individu: RotTable) -> RotTable:
-        return RotTable({ k: [e if e >= 2 else np.clip(self.mutateValue(e), rotTableConfig[k][i] - rotTableConfig[k][3 + i], rotTableConfig[k][i] + rotTableConfig[k][3 + i]) for i, e in enumerate(dinuc)] for k, dinuc in individu.rot_table.items() })
+        return RotTable({ k: [e if e >= 2 else np.clip(self.mutateValue(e, rotTableConfig[k][3 + i]), rotTableConfig[k][i] - rotTableConfig[k][3 + i], rotTableConfig[k][i] + rotTableConfig[k][3 + i]) for i, e in enumerate(dinuc)] for k, dinuc in individu.rot_table.items() })
     
     def mutate_population(self, population: list[RotTable]):
         return [self.mutate(individu) for individu in population]
@@ -27,10 +27,22 @@ class GaussianAdditiveMutation(Mutation):
         self.sigma = sigma
 
     def __str__(self) -> str:
-        return f"Gaussian additive, $\\sigma = {self.sigma}$"
+        return f"G+, $\\sigma = {self.sigma}$"
 
     def mutateValue(self, e: float) -> float:
         return e + np.random.normal(0, self.sigma)
+
+class GaussianAdditiveDeltaMutation(Mutation):
+    def __init__(self, sigma=1.) -> None:
+        super().__init__()
+
+        self.sigma = sigma
+
+    def __str__(self) -> str:
+        return f"G+$\\Delta$, $\\sigma = {self.sigma}$"
+
+    def mutateValue(self, e: float, delta: float) -> float:
+        return e + np.random.normal(0, self.sigma) * delta
     
 class GaussianMultiplicativeMutation(Mutation):
     def __init__(self, sigma=1.) -> None:
@@ -39,7 +51,7 @@ class GaussianMultiplicativeMutation(Mutation):
         self.sigma = sigma
 
     def __str__(self) -> str:
-        return f"Gaussian multiplicative, $\\sigma = {self.sigma}$"
+        return f"G*, $\\sigma = {self.sigma}$"
 
     def mutateValue(self, e: float) -> float:
         return e * np.exp(np.random.normal(0, self.sigma))
