@@ -1,6 +1,6 @@
 from dna.RotTable import RotTable
-from fitness import Fitness
 import random
+import numpy as np
 from abc import ABC, abstractmethod
 
 class Selection(ABC):
@@ -41,22 +41,10 @@ class Tournament(Selection):
 class Roulette(Selection):
     # Séléction par roulette
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
-        selected = []
-        size_of_selection = len(individus) // 2
+        expFitness = np.exp(fitness)
+        indices = np.random.choice(len(individus), len(individus)//2, p=expFitness / expFitness.sum())
 
-        # Calculer la somme des fitness
-        sum_fitness = sum(fitness)
-
-        for _ in range(size_of_selection):
-            # Choisir un individu au hasard
-            roulette_choisi = random.uniform(0, sum_fitness)
-            cumul_fitness = 0
-            for i in range(fitness):
-                cumul_fitness += fitness[i]
-                if cumul_fitness >= roulette_choisi:
-                    selected.append(individus[i])
-                    break
-        return selected
+        return [individus[i] for i in indices]
 
 
 class Rank(Selection):
