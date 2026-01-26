@@ -19,24 +19,21 @@ parser.parse_args()
 args = parser.parse_args()
 
 def main():
-
-    rot_table = RotTable(args.rot_table)
+    rot_table = RotTable()
     traj = Traj3D(args.draw)
 
     # Read file
     lineList = [line.rstrip('\n') for line in open(args.filename)]
     # Formatting
     seq = ''.join(lineList[1:])
-    traj.compute(seq, rot_table)
+    traj.compute(seq, rot_table, saveTraj=True)
 
     working_dir = os_getcwd()
     basename = os_path.basename(args.filename).split('.')[0]
 
     # Save the trajectory
     if args.save_traj:
-        traj.save_coords(
-            os_path.join(working_dir, basename + ".csv")
-        )
+        traj.save_coords(os_path.join(working_dir, basename + ".csv"))
     else:
         print(traj.getTraj())
 

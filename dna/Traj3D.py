@@ -28,13 +28,14 @@ class Traj3D:
     def getTraj(self) -> list:
         return self.__Traj3D
 
-    def compute(self, dna_seq: str, rot_table: RotTable):
+    def compute(self, dna_seq: str, rot_table: RotTable, saveTraj=False):
 
         # Matrice cumulant l'ensemble des transformations géométriques engendrées par la séquence d'ADN
         total_matrix = np.eye(4)  # Identity matrix
 
         # On enregistre la position du premier nucléotide
-        self.__Traj3D = [np.array([0.0, 0.0, 0.0, 1.0])]
+        if saveTraj:
+            self.__Traj3D = [np.array([0.0, 0.0, 0.0, 1.0])]
 
         matrices_Rz = {}
         matrices_Q = {}
@@ -61,7 +62,10 @@ class Traj3D:
             # On calcule la position du nucléotide courant
             # en appliquant toutes les transformations géométriques
             # à la position du premier nucléotide
-            self.__Traj3D.append(total_matrix @ self.__Traj3D[0])
+            if saveTraj:
+                self.__Traj3D.append(total_matrix @ self.__Traj3D[0])
+                
+        return (total_matrix @ self.__Traj3D[0]).T[:3]
 
     def __compute_matrices(self, rot_table: RotTable, dinucleotide: str):
 
@@ -98,6 +102,7 @@ class Traj3D:
 
     def draw(self):
         xyz = np.array(self.__Traj3D)
+        print(xyz)
         x, y, z = xyz[:,0], xyz[:,1], xyz[:,2]
         self.ax.plot(x,y,z)
         plt.show()

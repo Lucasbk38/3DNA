@@ -1,6 +1,8 @@
 from json import load as json_load
 from json import dump as json_dump
 
+rotTableConfig: dict[str, list[float]] = json_load(open('./dna/table.json'))
+defaultRotTable = {k: rotTableConfig[k][:3] for k in rotTableConfig}
 
 class RotTable:
     """Represents a rotation table"""
@@ -8,8 +10,8 @@ class RotTable:
     # 3 first values: 3 angle values
     # 3 last values: SD values
 
-    def __init__(self, filename: str):
-        self.rot_table = json_load(open(filename))
+    def __init__(self, rot_table=defaultRotTable):
+        self.rot_table = rot_table
 
     ###################
     # WRITING METHODS #
