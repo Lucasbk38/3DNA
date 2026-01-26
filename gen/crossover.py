@@ -18,8 +18,8 @@ class Crossover():
 
             rot_table_dict = {}
             for k,v in parent1.rot_table.items():
-                rot_table_dict[k] = [((parent1[k][i] + parent2[k][i]) / 2) for i in range(num_params)]
-                rot_table_dict[k] = [parent1[k][i] for i in range(num_params + 1, len(v))]
+                rot_table_dict[k] = [((parent1.rot_table[k][i] + parent2.rot_table[k][i]) / 2) for i in range(num_params)]
+                rot_table_dict[k] = [parent1.rot_table[k][i] for i in range(num_params + 1, len(v))]
             
             result.append(RotTable(rot_table_dict))
 

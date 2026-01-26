@@ -1,5 +1,4 @@
 from dna.RotTable import RotTable
-from fitness import Fitness
 import random
 from abc import ABC, abstractmethod
 
@@ -9,7 +8,7 @@ class Selection(ABC):
         pass
 
 class Elitism(Selection):
-    # Séléction par elimination des plus faibles
+    # Sélection par elimination des plus faibles
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
 
         # Trier les individus par fitness décroissante
@@ -20,7 +19,7 @@ class Elitism(Selection):
         return [individus[i] for i in individus_sorted[:half]]
 
 class Tournament(Selection):
-    # Séléction par tournoi
+    # Sélection par tournoi
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
         selected = []
         size_of_selection = len(individus) // 2
@@ -39,7 +38,7 @@ class Tournament(Selection):
 
 
 class Roulette(Selection):
-    # Séléction par roulette
+    # Sélection par roulette
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
         selected = []
         size_of_selection = len(individus) // 2
@@ -51,7 +50,7 @@ class Roulette(Selection):
             # Choisir un individu au hasard
             roulette_choisi = random.uniform(0, sum_fitness)
             cumul_fitness = 0
-            for i in range(fitness):
+            for i in range(len(fitness)):
                 cumul_fitness += fitness[i]
                 if cumul_fitness >= roulette_choisi:
                     selected.append(individus[i])
@@ -60,7 +59,7 @@ class Roulette(Selection):
 
 
 class Rank(Selection):
-    # Séléction par rang
+    # Sélection par rang
     def selection(self, individus: list[RotTable], fitness: list[float]):
         
         selected = []
