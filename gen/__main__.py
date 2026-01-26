@@ -1,14 +1,14 @@
-from gen.fitness import *
-from gen.crossover import *
-from gen.mutation import *
-from gen.selection import *
+from gen.fitness import Fitness
+from gen.crossover import Crossover
+from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, Mutation
+from gen.selection import Roulette, Rank, Tournament, Elitism, Selection
 from math import inf
 from dna.Traj3D import Traj3D
 import matplotlib.pyplot as plt
 from dna.RotTable import RotTable
 
 
-def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection, mutation, benchmark = False):
+def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection: Selection, mutation: Mutation, benchmark = False):
     fitness = Fitness()
     crossover = Crossover()
     traj3d = Traj3D(False)

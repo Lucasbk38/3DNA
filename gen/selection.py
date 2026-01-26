@@ -53,7 +53,7 @@ class Roulette(Selection):
     
     # Sélection par roulette
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
-        expFitness = np.exp(fitness)
+        expFitness = np.exp(np.array(fitness) / 100)
         indices = np.random.choice(len(individus), len(individus)//2, p=expFitness / expFitness.sum())
 
         return [individus[i] for i in indices]
