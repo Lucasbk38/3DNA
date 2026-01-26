@@ -69,11 +69,14 @@ def benchmark_selection_method(num_generations: int, generation_size: int, seq_f
     plt.show()
 
 def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filename: str):
-    for random_var in np.linspace(-1,1,10):
+    for random_var in np.linspace(-0.4,-0.2,10):
         sigma = 10**random_var
-        mutation = GaussianAdditiveMutation(sigma)
+        mutation = GaussianAdditiveDeltaMutation(sigma)
         selection = Roulette()
         genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True)
     plt.legend(loc = 1)
     plt.show()
 
+genetic_algorithm(10,1000,"data/test_1.fasta",Rank(),GaussianAdditiveDeltaMutation(5),True)
+plt.legend(loc = 4)
+plt.show()
