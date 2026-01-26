@@ -1,5 +1,5 @@
 from individu import Individu
 
 class Fitness():
-    def evaluate(rotTable: Individu) -> float:
+    def evaluate(self, rotTable: Individu) -> float:
         pass

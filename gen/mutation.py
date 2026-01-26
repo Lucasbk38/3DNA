@@ -1,5 +1,5 @@
 from individu import Individu
 
 class Mutation():
-    def mutate(rotTable: Individu) -> Individu:
+    def mutate(self, rotTable: Individu) -> Individu:
         pass

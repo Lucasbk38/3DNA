@@ -1,3 +1,3 @@
-class individu():
+class Individu():
     def __init__(self):
         pass
