@@ -9,6 +9,10 @@ class Selection(ABC):
         pass
 
 class Elitism(Selection):
+    def __init__(self):
+        super().__init__()
+        self.name = "Elitism"
+
     # Sélection par elimination des plus faibles
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
 
@@ -20,6 +24,10 @@ class Elitism(Selection):
         return [individus[i] for i in individus_sorted[:half]]
 
 class Tournament(Selection):
+    def __init__(self):
+        super().__init__()
+        self.name = "Tournament"
+        
     # Sélection par tournoi
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
         selected = []
@@ -39,6 +47,10 @@ class Tournament(Selection):
 
 
 class Roulette(Selection):
+    def __init__(self):
+        super().__init__()
+        self.name = "Roulette"
+    
     # Sélection par roulette
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
         expFitness = np.exp(fitness)
@@ -48,6 +60,10 @@ class Roulette(Selection):
 
 
 class Rank(Selection):
+    def __init__(self):
+        super().__init__()
+        self.name = "Rank"
+    
     # Sélection par rang
     def selection(self, individus: list[RotTable], fitness: list[float]):
         

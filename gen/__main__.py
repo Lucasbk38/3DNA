@@ -1,19 +1,16 @@
-from fitness import Fitness
-from crossover import Crossover
-from mutation import GaussianMultiplicativeMutation
-from selection import Selection
+from fitness import *
+from crossover import *
+from mutation import *
+from selection import *
 from dna.Traj3D import Traj3D
 from math import inf
 import matplotlib.pyplot as plt
 from dna.RotTable import RotTable
 
 
-def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection_method: str, benchmark = False):
+def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection, mutation, benchmark = False):
     fitness = Fitness()
     crossover = Crossover()
-    mutation = GaussianMultiplicativeMutation()
-    selection = Selection()
-
     traj3d = Traj3D(False)
 
     if benchmark: #if we want to plot the result
@@ -59,8 +56,10 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     return currentGeneration[best_individual_index], best_fitness
 
 def benchmark_selection_method(num_generations: int, generation_size: int, seq_filename: str):
-    selection = Selection()
-    for method in selection.method():
-        genetic_algorithm(num_generations,generation_size,seq_filename,method,True)
+    selections = { Elitism(), Roulette(), Rank(), Tournament() }
+    mutations = { GaussianAdditiveMutation(), GaussianMultiplicativeMutation() }
+    for selection in selections:
+        for mutation in mutations:            
+            genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True)
     plt.legend()
     plt.show()
