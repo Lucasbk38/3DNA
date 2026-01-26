@@ -6,7 +6,7 @@ from math import inf
 from dna.Traj3D import Traj3D
 import matplotlib.pyplot as plt
 from dna.RotTable import RotTable
-
+import numpy as np
 
 def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection: Selection, mutation: Mutation, benchmark = False):
     fitness = Fitness()
@@ -65,7 +65,15 @@ def benchmark_selection_method(num_generations: int, generation_size: int, seq_f
     for selection in selections:
         for mutation in mutations:            
             genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True)
-    plt.legend()
+    plt.legend(loc = 1)
     plt.show()
 
-benchmark_selection_method(16, 16, "data/plasmid_8k.fasta")
+def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filename: str):
+    for random_var in np.linspace(-1,1,10):
+        sigma = 10**random_var
+        mutation = GaussianAdditiveMutation(sigma)
+        selection = Roulette()
+        genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True)
+    plt.legend(loc = 1)
+    plt.show()
+
