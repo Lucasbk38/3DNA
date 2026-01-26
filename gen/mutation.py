@@ -9,6 +9,10 @@ class Mutation(ABC):
     def mutateValue (self, e: float) -> float:
         pass
 
+    @abstractmethod
+    def __str__(self) -> str:
+        pass
+
     def mutate(self, individu: RotTable) -> RotTable:
         return RotTable({ k: [e if e >= 2 else np.clip(self.mutateValue(e), rotTableConfig[k][i] - rotTableConfig[k][3 + i], rotTableConfig[k][i] + rotTableConfig[k][3 + i]) for i, e in enumerate(dinuc)] for k, dinuc in individu.rot_table.items() })
     
@@ -22,6 +26,9 @@ class GaussianAdditiveMutation(Mutation):
 
         self.sigma = sigma
 
+    def __str__(self) -> str:
+        return f"Gaussian additive, $\\sigma = {self.sigma}$"
+
     def mutateValue(self, e: float) -> float:
         return e + np.random.normal(0, self.sigma)
     
@@ -30,6 +37,9 @@ class GaussianMultiplicativeMutation(Mutation):
         super().__init__()
 
         self.sigma = sigma
+
+    def __str__(self) -> str:
+        return f"Gaussian multiplicative, $\\sigma = {self.sigma}$"
 
     def mutateValue(self, e: float) -> float:
         return e * np.exp(np.random.normal(0, self.sigma))

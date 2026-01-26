@@ -8,10 +8,16 @@ class Selection(ABC):
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
         pass
 
+    @abstractmethod
+    def __str__(self) -> str:
+        pass
+
 class Elitism(Selection):
     def __init__(self):
         super().__init__()
-        self.name = "Elitism"
+
+    def __str__(self) -> str:
+        return "Elitism"
 
     # Sélection par elimination des plus faibles
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
@@ -26,7 +32,9 @@ class Elitism(Selection):
 class Tournament(Selection):
     def __init__(self):
         super().__init__()
-        self.name = "Tournament"
+
+    def __str__(self) -> str:
+        return "Tournament"
         
     # Sélection par tournoi
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
@@ -49,7 +57,9 @@ class Tournament(Selection):
 class Roulette(Selection):
     def __init__(self):
         super().__init__()
-        self.name = "Roulette"
+
+    def __str__(self) -> str:
+        return "Roulette"
     
     # Sélection par roulette
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
@@ -62,7 +72,9 @@ class Roulette(Selection):
 class Rank(Selection):
     def __init__(self):
         super().__init__()
-        self.name = "Rank"
+
+    def __str__(self) -> str:
+        return "Rank"
     
     # Sélection par rang
     def select(self, individus: list[RotTable], fitness: list[float]):

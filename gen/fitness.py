@@ -6,6 +6,9 @@ class Fitness():
     def __init__(self):
         pass
 
+    def __str__(self) -> str:
+        return "$-norm_2$"
+
     def evaluate(self, rot_table: RotTable, traj: Traj3D, seq: str):
         new_seq = seq + seq[0]
         assert new_seq[0] == new_seq[-1]
