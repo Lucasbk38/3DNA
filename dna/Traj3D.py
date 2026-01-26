@@ -37,6 +37,8 @@ class Traj3D:
 
         matrices_Rz: dict[str, NDArray[np.float64]] = {}
         matrices_Q: dict[str, NDArray[np.float64]] = {}
+        dinucleotideMatrices: dict[str, NDArray[np.float64]] = {}
+
         # On parcourt la sequence, nucléotide par nucléotide
         for i in range(1, len(dna_seq)):
             # On lit le dinucleotide courant
@@ -45,17 +47,18 @@ class Traj3D:
             if dinucleotide not in matrices_Rz:
                 matrices_Rz[dinucleotide], matrices_Q[dinucleotide] = \
                     self.__compute_matrices(rot_table, dinucleotide)
+                
+                dinucleotideMatrices[dinucleotide] = \
+                    self.__MATRIX_T \
+                    @ matrices_Rz[dinucleotide] \
+                    @ matrices_Q[dinucleotide] \
+                    @ matrices_Rz[dinucleotide] \
+                    @ self.__MATRIX_T
 
             # On calcule les transformations géométriques
             # selon le dinucleotide courant,
             # et on les ajoute à la matrice totale
-            total_matrix: NDArray[np.float64] = \
-                total_matrix \
-                @ self.__MATRIX_T \
-                @ matrices_Rz[dinucleotide] \
-                @ matrices_Q[dinucleotide] \
-                @ matrices_Rz[dinucleotide] \
-                @ self.__MATRIX_T
+            total_matrix = total_matrix @ dinucleotideMatrices[dinucleotide]
 
             # On calcule la position du nucléotide courant
             # en appliquant toutes les transformations géométriques
