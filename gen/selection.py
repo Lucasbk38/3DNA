@@ -65,7 +65,7 @@ class Rank(Selection):
         self.name = "Rank"
     
     # Sélection par rang
-    def selection(self, individus: list[RotTable], fitness: list[float]):
+    def select(self, individus: list[RotTable], fitness: list[float]):
         
         selected = []
         size_of_selection = len(individus) // 2
