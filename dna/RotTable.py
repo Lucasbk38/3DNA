@@ -1,5 +1,6 @@
 from json import load as json_load
 from json import dump as json_dump
+import numpy as np
 
 rotTableConfig: dict[str, list[float]] = json_load(open('./dna/table.json'))
 defaultRotTable = {k: rotTableConfig[k][:3] for k in rotTableConfig}
@@ -45,3 +46,7 @@ class RotTable:
         """Saves the current rotation table to a file."""
         with open(filename, 'w') as file:
             json_dump(self.rot_table, file)
+
+    @staticmethod
+    def random ():
+        return RotTable({ k: [np.random.uniform(dinuc[i] - dinuc[3 + i], dinuc[i] + dinuc[3 + i]) for i in range(3)] for k, dinuc in rotTableConfig.items() })
