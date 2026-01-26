@@ -5,12 +5,17 @@ from mutation import Mutation
 from selection import Selection
 from dna.Traj3D import Traj3D
 from math import inf
+from random import uniform
+from json import load as json_load
+import matplotlib.pyplot as plt
 
 def random_rot_table():
-    pass
+    rotTableConfig: dict[str, list[float]] = json_load(open('./dna/table.json'))
+    random_rot_table = {[uniform(nuc[0] - nuc[4],nuc[0] + nuc[4]),uniform(nuc[1] - nuc[5],nuc[1] + nuc[5]),nuc[2]] for nuc in rotTableConfig}
+    return(random_rot_table)
 
 
-def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, benchmark: bool):
+def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, benchmark = False):
     fitness = Fitness()
     crossover = Crossover()
     mutation = Mutation()
@@ -18,8 +23,12 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
 
     traj3d = Traj3D(False)
 
+    if benchmark: #if we want to plot the result
+        best_indiv = []
     #Taken from dna.__main__
+    # Read file
     lineList = [line.rstrip('\n') for line in open(seq_filename)]
+    # Formatting
     seq = ''.join(lineList[1:])
 
     #make init generation
@@ -27,15 +36,10 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     eval = [0 for _ in range(generation_size)]
 
     for g in range(num_generations):
-        best_fitness = inf
         for i in range(generation_size):
             eval[i] = fitness.evaluate(currentGeneration[i], traj3d, seq)
-
-            if(benchmark and best_fitness > eval[i]):
-                best_fitness = eval[i]
-
-        if(benchmark):
-            print(f"best fitness: {best_fitness} at generation {i}")
+            if benchmark:
+                best_indiv.append(min(eval))
         
         selected = selection.select()
         crossed = crossover.make_full_population(selected, generation_size)
@@ -51,8 +55,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
         if f < best_fitness:
             best_fitness = f
             best_individual_index = i
-    
-    if(benchmark):
-        print(f"best fitness: {best_fitness} at last generation")
 
+    if benchmark:
+        plt.plot(list(range(num_generations),best_indiv))
     return currentGeneration[best_individual_index], best_fitness
