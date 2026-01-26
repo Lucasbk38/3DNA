@@ -63,6 +63,6 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
 def benchmark_selection_method(num_generations: int, generation_size: int, seq_filename: str):
     selection = Selection()
     for method in selection.method():
-        genetic_algorithm(num_generations,generation_size,seq_filename,method)
+        genetic_algorithm(num_generations,generation_size,seq_filename,method,True)
     plt.legend()
     plt.show()
