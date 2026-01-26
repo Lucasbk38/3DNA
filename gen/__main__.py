@@ -25,8 +25,8 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     currentGeneration = [RotTable.random() for i in range(generation_size)]
     eval = [0. for _ in range(generation_size)]
 
-    if benchmark:
-        list_best_fitness = []
+    
+    list_best_fitness = []
     for g in range(num_generations):
         best_fitness = -inf
         for i in range(generation_size):
@@ -77,6 +77,6 @@ def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filen
     plt.legend(loc = 1)
     plt.show()
 
-genetic_algorithm(10,1000,"data/test_1.fasta",Rank(),GaussianAdditiveDeltaMutation(5),True)
+genetic_algorithm(30, 30, "data/test_1.fasta", Rank(), GaussianAdditiveDeltaMutation(5), True)
 plt.legend(loc = 4)
 plt.show()
