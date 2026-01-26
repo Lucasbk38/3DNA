@@ -1,5 +1,5 @@
-from individu import Individu
+from dna.RotTable import RotTable
 
 class Selection():
-    def select(self, individus: list[Individu]) -> list[Individu]:
+    def select(self, population: list[RotTable]) -> list[RotTable]:
         pass
