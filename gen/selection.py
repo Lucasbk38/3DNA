@@ -1,5 +1,5 @@
 from individu import Individu
 
 class Selection():
-    def select(list: list[Individu]) -> list[Individu]:
+    def select(self, individus: list[Individu]) -> list[Individu]:
         pass
