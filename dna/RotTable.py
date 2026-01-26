@@ -10,7 +10,7 @@ class RotTable:
     # 3 first values: 3 angle values
     # 3 last values: SD values
 
-    def __init__(self, rot_table=defaultRotTable):
+    def __init__(self, rot_table: dict[str, list[float]] = defaultRotTable):
         self.rot_table = rot_table
 
     ###################

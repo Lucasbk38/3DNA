@@ -1,7 +1,6 @@
-from dna import RotTable
 from fitness import Fitness
 from crossover import Crossover
-from mutation import Mutation
+from mutation import GaussianMultiplicativeMutation
 from selection import Selection
 from dna.Traj3D import Traj3D
 from math import inf
@@ -13,7 +12,7 @@ def random_rot_table():
 def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, benchmark: bool):
     fitness = Fitness()
     crossover = Crossover()
-    mutation = Mutation()
+    mutation = GaussianMultiplicativeMutation()
     selection = Selection()
 
     traj3d = Traj3D(False)
