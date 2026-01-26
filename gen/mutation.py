@@ -29,7 +29,7 @@ class GaussianAdditiveMutation(Mutation):
     def __str__(self) -> str:
         return f"G+, $\\sigma = {self.sigma}$"
 
-    def mutateValue(self, e: float) -> float:
+    def mutateValue(self, e: float, delta: float) -> float:
         return e + np.random.normal(0, self.sigma)
 
 class GaussianAdditiveDeltaMutation(Mutation):
@@ -53,5 +53,5 @@ class GaussianMultiplicativeMutation(Mutation):
     def __str__(self) -> str:
         return f"G*, $\\sigma = {self.sigma}$"
 
-    def mutateValue(self, e: float) -> float:
+    def mutateValue(self, e: float, delta: float) -> float:
         return e * np.exp(np.random.normal(0, self.sigma))

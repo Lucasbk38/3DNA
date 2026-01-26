@@ -79,7 +79,7 @@ class Rank(Selection):
     # Sélection par rang
     def select(self, individus: list[RotTable], fitness: list[float]):
         selected: list[RotTable] = []
-        size_of_selection = len(individus) // 2
+        size_of_selection = len(individus) // 2 - 1
 
         # Trier les individus par fitness croissante (le pire en premier)
         individus_sorted = sorted(range(len(individus)), key=lambda i: fitness[i])
@@ -100,4 +100,4 @@ class Rank(Selection):
                     selected.append(individus[ind])
                     break
 
-        return selected
+        return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected
