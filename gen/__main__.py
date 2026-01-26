@@ -25,6 +25,8 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     currentGeneration = [RotTable.random() for i in range(generation_size)]
     eval = [0. for _ in range(generation_size)]
 
+    if benchmark:
+        list_best_fitness = []
     for g in range(num_generations):
         best_fitness = -inf
         for i in range(generation_size):
@@ -35,7 +37,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
 
         if(benchmark):
             print(f"generation: {g}, best fitness {best_fitness}")
-        
+            list_best_fitness.append(best_fitness)
         selected = selection.select(currentGeneration, eval)
         crossed = crossover.make_full_population(selected, generation_size - len(selected))
         mutated = mutation.mutate_population(crossed)
@@ -53,6 +55,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     
     if(benchmark):
         print(f"last generation, best fitness: {best_fitness}")
+        plt.plot(range(num_generations),list_best_fitness,label=f"Sélection : {selection} et Mutation : {mutation} ")
 
     return currentGeneration[best_individual_index], best_fitness
 
@@ -65,4 +68,4 @@ def benchmark_selection_method(num_generations: int, generation_size: int, seq_f
     plt.legend()
     plt.show()
 
-genetic_algorithm(16, 16, "data/plasmid_8k.fasta", Elitism(), GaussianAdditiveMutation(), True)
+benchmark_selection_method(16, 16, "data/plasmid_8k.fasta")
