@@ -1,7 +1,6 @@
-import math
-
 #For drawing
 import numpy as np
+from numpy.typing import NDArray
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from dna.RotTable import RotTable
@@ -28,7 +27,7 @@ class Traj3D:
     def getTraj(self) -> list:
         return self.__Traj3D
 
-    def compute(self, dna_seq: str, rot_table: RotTable):
+    def compute(self, dna_seq: str, rot_table: RotTable, saveTraj=False) -> NDArray[np.float64]:
 
         # Matrice cumulant l'ensemble des transformations géométriques engendrées par la séquence d'ADN
         total_matrix = np.eye(4)  # Identity matrix
@@ -36,12 +35,12 @@ class Traj3D:
         # On enregistre la position du premier nucléotide
         self.__Traj3D = [np.array([0.0, 0.0, 0.0, 1.0])]
 
-        matrices_Rz = {}
-        matrices_Q = {}
+        matrices_Rz: dict[str, NDArray[np.float64]] = {}
+        matrices_Q: dict[str, NDArray[np.float64]] = {}
         # On parcourt la sequence, nucléotide par nucléotide
         for i in range(1, len(dna_seq)):
             # On lit le dinucleotide courant
-            dinucleotide = dna_seq[i-1]+dna_seq[i]
+            dinucleotide = dna_seq[i-1] + dna_seq[i]
             # On remplit au fur et à mesure les matrices de rotation
             if dinucleotide not in matrices_Rz:
                 matrices_Rz[dinucleotide], matrices_Q[dinucleotide] = \
@@ -50,7 +49,7 @@ class Traj3D:
             # On calcule les transformations géométriques
             # selon le dinucleotide courant,
             # et on les ajoute à la matrice totale
-            total_matrix = \
+            total_matrix: NDArray[np.float64] = \
                 total_matrix \
                 @ self.__MATRIX_T \
                 @ matrices_Rz[dinucleotide] \
@@ -61,36 +60,39 @@ class Traj3D:
             # On calcule la position du nucléotide courant
             # en appliquant toutes les transformations géométriques
             # à la position du premier nucléotide
-            self.__Traj3D.append(total_matrix @ self.__Traj3D[0])
+            if saveTraj:
+                self.__Traj3D.append(total_matrix @ self.__Traj3D[0])
+                
+        return (total_matrix @ self.__Traj3D[0]).T[:3]
 
     def __compute_matrices(self, rot_table: RotTable, dinucleotide: str):
 
-        Omega = math.radians(rot_table.getTwist(dinucleotide))
+        Omega = np.radians(rot_table.getTwist(dinucleotide))
         # Create rotation matrix of theta on Z axis
         matrices_Rz = \
-            np.array([[math.cos(Omega/2), math.sin(Omega/2), 0, 0],
-                        [-math.sin(Omega/2), math.cos(Omega/2), 0, 0],
+            np.array([[np.cos(Omega/2), np.sin(Omega/2), 0, 0],
+                        [-np.sin(Omega/2), np.cos(Omega/2), 0, 0],
                         [0, 0, 1, 0],
                         [0, 0, 0, 1]])
 
         sigma = rot_table.getWedge(dinucleotide)
         delta = rot_table.getDirection(dinucleotide)
-        alpha = math.radians(sigma)
-        beta = math.radians(delta - 90)
+        alpha = np.radians(sigma)
+        beta = np.radians(delta - 90)
         # Rotate of -beta on Z axis
         # Rotate of -alpha on X axis
         # Rotate of beta on Z axis
         matrices_Q = \
-            np.array([[math.cos(-beta), math.sin(-beta), 0, 0],
-                        [-math.sin(-beta), math.cos(-beta), 0, 0],
+            np.array([[np.cos(-beta), np.sin(-beta), 0, 0],
+                        [-np.sin(-beta), np.cos(-beta), 0, 0],
                         [0, 0, 1, 0],
                         [0, 0, 0, 1]]) \
             @ np.array([[1, 0, 0, 0],
-                            [0, math.cos(-alpha), math.sin(-alpha), 0],
-                            [0, -math.sin(-alpha), math.cos(-alpha), 0],
+                            [0, np.cos(-alpha), np.sin(-alpha), 0],
+                            [0, -np.sin(-alpha), np.cos(-alpha), 0],
                             [0, 0, 0, 1]]) \
-            @ np.array([[math.cos(beta), math.sin(beta), 0, 0],
-                        [-math.sin(beta), math.cos(beta), 0, 0],
+            @ np.array([[np.cos(beta), np.sin(beta), 0, 0],
+                        [-np.sin(beta), np.cos(beta), 0, 0],
                         [0, 0, 1, 0],
                         [0, 0, 0, 1]])
         
@@ -98,6 +100,7 @@ class Traj3D:
 
     def draw(self):
         xyz = np.array(self.__Traj3D)
+        print(xyz)
         x, y, z = xyz[:,0], xyz[:,1], xyz[:,2]
         self.ax.plot(x,y,z)
         plt.show()

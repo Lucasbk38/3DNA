@@ -1,5 +1,5 @@
-from individu import Individu
+from dna.RotTable import RotTable
 
 class Mutation():
-    def mutate(self, rotTable: Individu) -> Individu:
+    def mutate_population(self, population: list[RotTable]):
         pass

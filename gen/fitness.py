@@ -1,5 +1,13 @@
-from individu import Individu
+from dna.Traj3D import Traj3D
+from dna.RotTable import RotTable
+import numpy as np
 
 class Fitness():
-    def evaluate(self, rotTable: Individu) -> float:
+    def __init__(self):
         pass
+
+    def evaluate(self, rot_table: RotTable, traj: Traj3D, seq: str) -> np.floating:
+        new_seq = seq + seq[0]
+        assert new_seq[0] == new_seq[-1]
+
+        return np.linalg.norm(traj.compute(new_seq, rot_table), 2) #Norm of the last point of the DNA (we search to minimize it)
