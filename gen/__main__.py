@@ -58,4 +58,5 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
 
     if benchmark:
         plt.plot(list(range(num_generations),best_indiv))
+        plt.show()
     return currentGeneration[best_individual_index], best_fitness
