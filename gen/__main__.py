@@ -1,7 +1,7 @@
-from fitness import *
-from crossover import *
-from mutation import *
-from selection import *
+from gen.fitness import *
+from gen.crossover import *
+from gen.mutation import *
+from gen.selection import *
 from dna.Traj3D import Traj3D
 from math import inf
 import matplotlib.pyplot as plt
@@ -23,9 +23,10 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
 
     #make init generation
     currentGeneration = [RotTable.random() for i in range(generation_size)]
-    eval = [0 for _ in range(generation_size)]
+    eval = [0. for _ in range(generation_size)]
 
     for g in range(num_generations):
+        best_fitness = inf
         for i in range(generation_size):
             eval[i] = fitness.evaluate(currentGeneration[i], traj3d, seq)
 
@@ -63,3 +64,5 @@ def benchmark_selection_method(num_generations: int, generation_size: int, seq_f
             genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True)
     plt.legend()
     plt.show()
+
+genetic_algorithm(5, 10, "data/nothing.fasta", Elitism(), GaussianAdditiveMutation(), True)
