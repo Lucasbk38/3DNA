@@ -9,7 +9,7 @@ class Selection(ABC):
         pass
 
 class Elitism(Selection):
-    # Séléction par elimination des plus faibles
+    # Sélection par elimination des plus faibles
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
 
         # Trier les individus par fitness décroissante
@@ -20,7 +20,7 @@ class Elitism(Selection):
         return [individus[i] for i in individus_sorted[:half]]
 
 class Tournament(Selection):
-    # Séléction par tournoi
+    # Sélection par tournoi
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
         selected = []
         size_of_selection = len(individus) // 2
@@ -39,7 +39,7 @@ class Tournament(Selection):
 
 
 class Roulette(Selection):
-    # Séléction par roulette
+    # Sélection par roulette
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
         expFitness = np.exp(fitness)
         indices = np.random.choice(len(individus), len(individus)//2, p=expFitness / expFitness.sum())
@@ -48,7 +48,7 @@ class Roulette(Selection):
 
 
 class Rank(Selection):
-    # Séléction par rang
+    # Sélection par rang
     def selection(self, individus: list[RotTable], fitness: list[float]):
         
         selected = []
