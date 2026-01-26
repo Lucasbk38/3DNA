@@ -19,9 +19,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     traj3d = Traj3D(False)
 
     #Taken from dna.__main__
-    # Read file
     lineList = [line.rstrip('\n') for line in open(seq_filename)]
-    # Formatting
     seq = ''.join(lineList[1:])
 
     #make init generation
@@ -29,8 +27,15 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     eval = [0 for _ in range(generation_size)]
 
     for g in range(num_generations):
+        best_fitness = inf
         for i in range(generation_size):
             eval[i] = fitness.evaluate(currentGeneration[i], traj3d, seq)
+
+            if(benchmark and best_fitness > eval[i]):
+                best_fitness = eval[i]
+
+        if(benchmark):
+            print(f"best fitness: {best_fitness} at generation {i}")
         
         selected = selection.select()
         crossed = crossover.make_full_population(selected, generation_size)
@@ -46,5 +51,8 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
         if f < best_fitness:
             best_fitness = f
             best_individual_index = i
+    
+    if(benchmark):
+        print(f"best fitness: {best_fitness} at last generation")
 
     return currentGeneration[best_individual_index], best_fitness
