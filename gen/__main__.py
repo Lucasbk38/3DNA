@@ -5,7 +5,7 @@ from gen.genetic import *
 
 
 benchmark(
-    512, 64,
+    4, 4,
     "data/plasmid_8k.fasta",
     [ Tournament() ],
     [ ThresholdMutator(SimulatedAnnealingMutation(GaussianAdditiveDeltaMutation(sigma=1), key="sigma", alpha=.99), mutation_probability=.2) for _ in range(1) ],

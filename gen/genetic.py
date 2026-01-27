@@ -95,14 +95,14 @@ def benchmark(
     plt.show()
 
     if seq_filename == "data/plasmid_8k.fasta":
-        rotTableref = json_load(open('./gen/best_rottable8k.json'))
-        if (score in rotTableref and best_fitness > score) or not score in rotTableref:
+        rotTableref = json_load(open('gen/best_rottable8k.json'))
+        if best_fitness > rotTableref["score"]:
             with open("gen/best_rottable8k.json", 'w') as file:
                 best_rottable.rot_table["score"] = best_fitness
                 json_dump(best_rottable.rot_table, file, indent = 4)
     if seq_filename == "data/plasmid_180k.fasta":
-        rotTableref = json_load(open('./gen/best_rottable180k.json'))
-        if (score in rotTableref and best_fitness > score) or not score in rotTableref:
+        rotTableref = json_load(open('gen/best_rottable180k.json'))
+        if best_fitness > rotTableref["score"]:
             with open("gen/best_rottable180k.json", 'w') as file:
                 best_rottable.rot_table["score"] = best_fitness
                 json_dump(best_rottable.rot_table, file, indent = 4)
