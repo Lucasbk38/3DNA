@@ -1,5 +1,4 @@
 from dna.RotTable import RotTable, rotTableConfig
-from typing import Callable
 from abc import ABC, abstractmethod
 import numpy as np
 from random import random
