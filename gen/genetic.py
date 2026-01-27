@@ -92,7 +92,7 @@ def benchmark(
     plt.xlabel("Génération n")
     plt.ylabel("Evaluation du meilleur individu de la génération (échelle logarithmique)")
     plt.show()
-    with open("gen/best_rottable.json", 'w') as file:
+    with open(f"best_rottable.json", 'w') as file:
             json_dump(best_rottable.rot_table, file)
 
 
