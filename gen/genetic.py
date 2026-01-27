@@ -10,6 +10,7 @@ from dna.RotTable import RotTable
 import numpy as np
 from dna.RotTable import defaultRotTable
 from json import dump as json_dump
+from json import load as json_load
 
 def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection: Selection, crossover: Crossover, mutation: Mutation, benchmark = False, visualisation = False, comparison = False):
     fitness = Fitness()
@@ -92,8 +93,19 @@ def benchmark(
     plt.xlabel("Génération n")
     plt.ylabel("Evaluation du meilleur individu de la génération (échelle logarithmique)")
     plt.show()
-    with open(f"best_rottable.json", 'w') as file:
-            json_dump(best_rottable.rot_table, file)
+
+    if seq_filename == "data/plasmid_8k.fasta":
+        rotTableref = json_load(open('./gen/best_rottable8k.json'))
+        if (score in rotTableref and best_fitness > score) or not score in rotTableref:
+            with open("gen/best_rottable8k.json", 'w') as file:
+                best_rottable.rot_table["score"] = best_fitness
+                json_dump(best_rottable.rot_table, file, indent = 4)
+    if seq_filename == "data/plasmid_180k.fasta":
+        rotTableref = json_load(open('./gen/best_rottable180k.json'))
+        if (score in rotTableref and best_fitness > score) or not score in rotTableref:
+            with open("gen/best_rottable180k.json", 'w') as file:
+                best_rottable.rot_table["score"] = best_fitness
+                json_dump(best_rottable.rot_table, file, indent = 4)
 
 
 def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filename: str):
