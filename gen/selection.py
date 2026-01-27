@@ -65,6 +65,9 @@ class RouletteSelection(Selection):
         expFitness = np.exp(np.array(fitness) / 100)
         indices = np.random.choice(len(individus), int(keepRate * len(individus)) - 1, p=expFitness / expFitness.sum())
 
+        # Conversion
+        indices = [int(i) for i in indices]
+
         return [max(range(len(individus)), key=lambda i: fitness[i])] + list(indices)
 
 
@@ -96,10 +99,10 @@ class RankSelection(Selection):
             for ind, rank in zip(individus_sorted, ranks):
                 cumul += rank
                 if cumul >= r:
-                    selected.append(individus[ind])
+                    selected.append(ind)
                     break
 
-        return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected
+        return [max(range(len(individus)), key=lambda i: fitness[i])] + selected
     
 class TournamentWithHopeSelection(Selection):
     def __init__(self, hopeProbability = 0.001):
