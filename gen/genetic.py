@@ -1,6 +1,6 @@
 from gen.fitness import Fitness
 from gen.crossover import Crossover
-from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation
+from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, ThresholdMutator, SimulatedAnnealingMutation
 from gen.selection import Roulette, Rank, Tournament, Elitism, Selection
 from math import inf
 from dna.Traj3D import Traj3D
@@ -39,7 +39,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
             list_best_fitness.append(best_fitness)
         selected = selection.select(currentGeneration, eval)
         crossed = crossover.make_full_population(selected, generation_size - len(selected))
-        mutated = mutation.mutate_population(crossed)
+        mutated = mutation.mutate_population(crossed, g)
 
         currentGeneration = selected + mutated
     
@@ -68,15 +68,21 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     
     return currentGeneration[best_individual_index], best_fitness
 
-def benchmark_selection_method(num_generations: int, generation_size: int, seq_filename: str):
-    selections = { Elitism(), Roulette(), Rank(), Tournament() }
-    mutations = { GaussianAdditiveMutation(), GaussianMultiplicativeMutation() }
+def benchmark(
+    num_generations: int,
+    generation_size: int,
+    seq_filename: str,
+    selections: list[Selection] = [ Elitism(), Roulette(), Rank(), Tournament() ],
+    mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ]
+):
     for selection in selections:
         for mutation in mutations:
             print(f"{str(selection)} and {str(mutation)}")
             genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True, False)
-    plt.legend(loc = 4)
+
+    plt.legend(loc = 4, prop={ 'size': 6 })
     plt.show()
+
 
 def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filename: str):
     for random_var in np.linspace(-0.4,-0.2,10):
