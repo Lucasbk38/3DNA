@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from dna.RotTable import RotTable
 import numpy as np
 from dna.RotTable import defaultRotTable
+from json import dump as json_dump
 
 def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection: Selection, crossover: Crossover, mutation: Mutation, benchmark = False, visualisation = False, comparison = False):
     fitness = Fitness()
@@ -82,14 +83,21 @@ def benchmark(
     mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ],
     crossovers: list[Crossover] = [ MeanCrossover() ]
 ):
+    best_fitness = inf
+    best_rottable = None
     for selection in selections:
         for mutation in mutations:
             for crossover in crossovers:
                 print(f"{str(selection)} and {str(mutation)}")
-                genetic_algorithm(num_generations,generation_size,seq_filename, selection, crossover, mutation, True, False)
-
+                rottable, score = genetic_algorithm(num_generations,generation_size,seq_filename, selection, crossover, mutation, True, False)
+                if score < best_fitness:
+                    best_rottable, best_fitness = rottable, score
     plt.legend(loc = 1, prop={ 'size': 6 })
+    plt.xlabel("Génération n")
+    plt.ylabel("Evaluation du meilleur individu de la génération (échelle logarithmique)")
     plt.show()
+    with open(f"best_rottable.json", 'w') as file:
+            json_dump(best_rottable.rot_table, file)
 
 
 def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filename: str):
