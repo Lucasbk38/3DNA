@@ -72,8 +72,9 @@ def benchmark_selection_method(num_generations: int, generation_size: int, seq_f
     selections = { Elitism(), Roulette(), Rank(), Tournament() }
     mutations = { GaussianAdditiveMutation(), GaussianMultiplicativeMutation() }
     for selection in selections:
-        for mutation in mutations:            
-            genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True, True)
+        for mutation in mutations:
+            print(f"{str(selection)} and {str(mutation)}")
+            genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True, False)
     plt.legend(loc = 4)
     plt.show()
 
