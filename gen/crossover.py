@@ -7,7 +7,7 @@ class Crossover(ABC):
     def make_full_population(self, selected_individuals: list[RotTable], num_children: int, fitness: list[float]) -> list[RotTable]:
         pass
 
-class Mean(Crossover):
+class MeanCrossover(Crossover):
     #Takes a population of selected individuals, then crosses them over to make generation_size individuals
     def make_full_population(self, selected_individuals: list[RotTable], num_children: int, fitness: list[float]) -> list[RotTable]:
         n = len(selected_individuals)
@@ -24,7 +24,7 @@ class Mean(Crossover):
 
         return result 
 
-class FitnessWeightedMean(Crossover):
+class FitnessWeightedMeanCrossover(Crossover):
     def make_full_population(self, selected_individuals: list[RotTable], num_children: int, fitness: list[float]) -> list[RotTable]:
         n = len(selected_individuals)
         result = []
@@ -45,7 +45,7 @@ class FitnessWeightedMean(Crossover):
 
         return result
     
-class ChooseBetweenParents(Crossover):
+class ChooseBetweenParentsCrossover(Crossover):
     def make_full_population(self, selected_individuals: list[RotTable], num_children: int, fitness: list[float]) -> list[RotTable]:
         n = len(selected_individuals)
         result = []

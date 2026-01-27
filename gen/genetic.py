@@ -1,8 +1,9 @@
 from gen.fitness import Fitness
-from gen.crossover import Crossover, Mean, FitnessWeightedMean
+from gen.crossover import Crossover, MeanCrossover, FitnessWeightedMeanCrossover
 from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation, ThresholdMutator
 from gen.selection import Roulette, Rank, Tournament, Elitism, Selection
 from math import inf
+import statistics
 from dna.Traj3D import Traj3D
 import matplotlib.pyplot as plt
 from dna.RotTable import RotTable
@@ -36,7 +37,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
         if(benchmark):
             avg = sum(eval) / len(eval)
             sd = np.sqrt(sum([e ** 2 for e in eval]) / len(eval) - avg ** 2)
-            print(f"generation: {g}, best fitness: {best_fitness}, avg: {avg}, sd: {sd}")
+            print(f"generation: {g}, best fitness: {best_fitness}, med: {statistics.median(eval)}, avg: {avg}, sd: {sd}")
             list_best_fitness.append(best_fitness)
         selected = selection.select(currentGeneration, eval)
         crossed = crossover.make_full_population(selected, generation_size - len(selected), eval)
@@ -75,7 +76,7 @@ def benchmark(
     seq_filename: str,
     selections: list[Selection] = [ Elitism(), Roulette(), Rank(), Tournament() ],
     mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ],
-    crossovers: list[Crossover] = [ Mean() ]
+    crossovers: list[Crossover] = [ MeanCrossover() ]
 ):
     best_fitness = inf
     for selection in selections:
@@ -97,7 +98,7 @@ def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filen
         sigma = 10**random_var
         mutation = GaussianAdditiveDeltaMutation(sigma)
         selection = Roulette()
-        crossover = Mean()
+        crossover = MeanCrossover()
         genetic_algorithm(num_generations,generation_size,seq_filename, selection, crossover, mutation, True)
     plt.legend(loc = 1)
     plt.show()
