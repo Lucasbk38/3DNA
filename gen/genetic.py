@@ -1,7 +1,7 @@
 from gen.fitness import Fitness
 from gen.crossover import Crossover
 from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation
-from gen.selection import Roulette, Rank, Tournament, Elitism, Selection
+from gen.selection import Roulette, Rank, Tournament, Elitism, Selection, Tournament_with_hope
 from math import inf
 from dna.Traj3D import Traj3D
 import matplotlib.pyplot as plt
@@ -69,7 +69,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     return currentGeneration[best_individual_index], best_fitness
 
 def benchmark_selection_method(num_generations: int, generation_size: int, seq_filename: str):
-    selections = { Elitism(), Roulette(), Rank(), Tournament() }
+    selections = { Elitism(), Roulette(), Rank(), Tournament(), Tournament_with_hope() }
     mutations = { GaussianAdditiveMutation(), GaussianMultiplicativeMutation() }
     for selection in selections:
         for mutation in mutations:
