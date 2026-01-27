@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from dna.RotTable import RotTable
 import numpy as np
 from dna.RotTable import defaultRotTable
+from json import dump as json_dump
 
 def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection: Selection, crossover: Crossover, mutation: Mutation, benchmark = False, visualisation = False, comparison = False):
     fitness = Fitness()
@@ -91,7 +92,8 @@ def benchmark(
     plt.xlabel("Génération n")
     plt.ylabel("Norme du dernier point de la trajectoire pour le meilleur individu de la génération (échelle logarithmique)")
     plt.show()
-    return(best_rottable,best_fitness)
+    with open(f"best_rottable_{seq_filename}", 'w') as file:
+            json_dump(best_rottable.rot_table, file)
 
 
 def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filename: str):
