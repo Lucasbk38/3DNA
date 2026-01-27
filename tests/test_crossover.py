@@ -12,7 +12,7 @@ class TestCrossover(unittest.TestCase):
     
     def test_size(self):
         """Vérification de la taille de la population"""
-        population = self.crossover.make_full_population(self.table_example.getTable(),self.n)
+        population = self.crossover.make_full_population([self.table_example],self.n)
         assert len(population) == self.n
 
     def test_empty_list(self):
