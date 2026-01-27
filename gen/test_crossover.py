@@ -1,13 +1,28 @@
 from gen.crossover import Crossover
-import pytest
 from dna.RotTable import RotTable
 from random import randint
+import unittest
 
-crossover = Crossover()
-table_example = RotTable() #Default rot table
-n = randint(0,len(table_example))
-def test_size():
-    assert len(crossover.make_full_population(table_example,n)) == n + len(table_example)
+class TestCrossover(unittest.TestCase):
 
-def test_empty_list():
-    assert crossover.make_full_population([],0) == []
+    def setUp(self):
+        self.crossover = Crossover()
+        self.table_example = RotTable() #Default rot table
+        self.n = randint(0,len(self.table_example.getTable()))
+    
+    def test_size(self):
+        """Vérification de la taille de la population"""
+        population = self.crossover.make_full_population(self.table_example.getTable(),self.n)
+        assert len(population) == self.n
+
+    def test_empty_list(self):
+         """Vérifie que la population est vide"""
+         assert self.crossover.make_full_population([],0) == []
+
+if __name__ == '__main__':
+    unittest.main()
+
+    
+
+
+
