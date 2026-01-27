@@ -1,6 +1,6 @@
 from gen.fitness import Fitness
-from gen.crossover import Crossover
-from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, ThresholdMutator, SimulatedAnnealingMutation
+from gen.crossover import Crossover, Mean
+from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation, ThresholdMutator
 from gen.selection import Roulette, Rank, Tournament, Elitism, Selection
 from math import inf
 from dna.Traj3D import Traj3D
@@ -9,9 +9,8 @@ from dna.RotTable import RotTable
 import numpy as np
 from dna.RotTable import defaultRotTable
 
-def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection: Selection, mutation: Mutation, benchmark = False, visualisation = False, comparison = False):
+def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection: Selection, crossover: Crossover, mutation: Mutation, benchmark = False, visualisation = False, comparison = False):
     fitness = Fitness()
-    crossover = Crossover()
     traj3d = Traj3D(visualisation)
 
     #Taken from dna.__main__
@@ -38,7 +37,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
             print(f"generation: {g}, best fitness {best_fitness}")
             list_best_fitness.append(best_fitness)
         selected = selection.select(currentGeneration, eval)
-        crossed = crossover.make_full_population(selected, generation_size - len(selected))
+        crossed = crossover.make_full_population(selected, generation_size - len(selected), eval)
         mutated = mutation.mutate_population(crossed, g)
 
         currentGeneration = selected + mutated
@@ -73,12 +72,14 @@ def benchmark(
     generation_size: int,
     seq_filename: str,
     selections: list[Selection] = [ Elitism(), Roulette(), Rank(), Tournament() ],
-    mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ]
+    mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ],
+    crossovers: list[Crossover] = [ Mean() ]
 ):
     for selection in selections:
         for mutation in mutations:
-            print(f"{str(selection)} and {str(mutation)}")
-            genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True, False)
+            for crossover in crossovers:
+                print(f"{str(selection)} and {str(mutation)}")
+                genetic_algorithm(num_generations,generation_size,seq_filename, selection, crossover, mutation, True, False)
 
     plt.legend(loc = 4, prop={ 'size': 6 })
     plt.show()
@@ -89,6 +90,7 @@ def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filen
         sigma = 10**random_var
         mutation = GaussianAdditiveDeltaMutation(sigma)
         selection = Roulette()
-        genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True)
+        crossover = Mean()
+        genetic_algorithm(num_generations,generation_size,seq_filename, selection, crossover, mutation, True)
     plt.legend(loc = 1)
     plt.show()

@@ -23,7 +23,10 @@ class TestRotTable(unittest.TestCase):
             os.remove(cls.sample_file)
 
     def setUp(self):
-        self.rot_table = RotTable(self.sample_file)
+        # Load the JSON into a dictionary and pass that to RotTable
+        with open(self.sample_file) as f:
+            table_data = json.load(f)
+        self.rot_table = RotTable(table_data)
 
     def test_initialization(self):
         """Test if the table is loaded correctly."""

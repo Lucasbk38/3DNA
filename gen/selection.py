@@ -101,3 +101,35 @@ class Rank(Selection):
                     break
 
         return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected
+    
+class Tournament_with_hope(Selection):
+    def __init__(self):
+        super().__init__()
+
+    def __str__(self) -> str:
+        return "Tournament"
+        
+    # Sélection par tournoi
+    def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
+        selected: list[RotTable] = []
+        size_of_selection = len(individus) // 2 - 1
+
+        for _ in range(size_of_selection):
+            # Choisir 2 individus au hasard
+            p1 = random.randint(0, len(individus) - 1)
+            p2 = random.randint(0, len(individus) - 1)
+            # Prendre le meilleur du tournoi mais le pire a une chance
+            p = random.uniform(0, 1)
+            if p < 10**(-3):
+                if fitness[p1] > fitness[p2]:
+                    selected.append(individus[p2])
+                else:
+                    selected.append(individus[p2])
+            # Tournoi normal
+            else:
+                if fitness[p1] > fitness[p2]:
+                    selected.append(individus[p1])
+                else:
+                    selected.append(individus[p2])
+
+        return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected

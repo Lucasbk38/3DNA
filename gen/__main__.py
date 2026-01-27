@@ -1,7 +1,5 @@
 from gen.genetic import *
 
-import numpy as np
-
 # genetic_algorithm(15,30,"data/plasmid_8k.fasta",Roulette(),GaussianAdditiveDeltaMutation(5),True,True,True)
 
 
