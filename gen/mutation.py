@@ -78,6 +78,13 @@ class GaussianMultiplicativeMutation(GaussianMutator):
     def mutateValue(self, e: float, delta: float) -> float:
         return e * np.exp(self.gaussian())
     
+
+class GaussianAdditiveDeltaLog10FitnessAnnealedMutation(GaussianMutator):
+    name = "G+$\\DeltaF$"
+
+    def mutateValue(self, e: float, delta: float) -> float:
+        return e + self.gaussian() * delta #* logFit
+    
 class SimulatedAnnealingMutation(Mutation):
     """We lower the chance of mutation as the simulation goes on"""
     def __init__(self, mutator: Mutation, key: str, alpha = 1.) -> None:

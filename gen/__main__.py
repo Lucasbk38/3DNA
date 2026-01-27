@@ -9,5 +9,5 @@ benchmark(
     "data/plasmid_8k.fasta",
     [ Tournament() ],
     [ ThresholdMutator(SimulatedAnnealingMutation(GaussianAdditiveDeltaMutation(sigma=1), key="sigma", alpha=.99), mutation_probability=.2) for _ in range(1) ],
-    [ FitnessWeightedMean() ]
+    [ FitnessWeightedMeanCrossover() ]
 )
