@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from gen.selection import Elitism, Tournament, Roulette, Rank, Tournament_with_hope
+from gen.selection import Elitism, TournamentSelection, RouletteSelection, RankSelection, TournamentWithHopeSelection
 from dna.RotTable import RotTable
 from dna.Traj3D import Traj3D
 from gen.fitness import Fitness
@@ -31,7 +31,7 @@ class TestSelection(unittest.TestCase):
     def test_elitism_selects_best_individuals(self):
         """Test de l'élitisme"""
         selector = Elitism()
-        selected = selector.select(self.individus, self.fitness)
+        selected = selector.select(1/2, self.individus, self.fitness)
         
         # Vérification 1: Taille correcte
         self.assertEqual(len(selected), self.expected_size)
@@ -44,8 +44,8 @@ class TestSelection(unittest.TestCase):
 
     def test_tournament_favors_best(self):
         """Test du tournoi"""
-        selector = Tournament()
-        selected = selector.select(self.individus, self.fitness)
+        selector = TournamentSelection()
+        selected = selector.select(1/2, self.individus, self.fitness)
         
         # Vérification 1: Taille correcte et individus valides
         self.assertEqual(len(selected), self.expected_size)
@@ -71,7 +71,7 @@ class TestSelection(unittest.TestCase):
         repetitions = 100
         
         for _ in range(repetitions):
-            selected = selector.select(self.individus, self.fitness)
+            selected = selector.select(1/2, self.individus, self.fitness)
             if best_individual in selected:
                 count_best += 1
             if worst_individual in selected:
@@ -87,8 +87,8 @@ class TestSelection(unittest.TestCase):
     def test_roulette_probabilistic_selection(self):
         """Test de la roulette"""
 
-        selector = Roulette()
-        selected = selector.select(self.individus, self.fitness)
+        selector = RouletteSelection()
+        selected = selector.select(1/2, self.individus, self.fitness)
         
         # Vérification 1: Taille correcte et individus valides
         self.assertEqual(len(selected), self.expected_size)
@@ -114,7 +114,7 @@ class TestSelection(unittest.TestCase):
         repetitions = 100
         
         for _ in range(repetitions):
-            selected = selector.select(self.individus, self.fitness)
+            selected = selector.select(1/2, self.individus, self.fitness)
             if best_individual in selected:
                 count_best += 1
             if worst_individual in selected:
@@ -130,8 +130,8 @@ class TestSelection(unittest.TestCase):
     def test_rank_based_selection(self):
         """Test du rang"""
 
-        selector = Rank()
-        selected = selector.select(self.individus, self.fitness)
+        selector = RankSelection()
+        selected = selector.select(1/2, self.individus, self.fitness)
         
         # Vérification 1: Taille correcte et individus valides
         self.assertEqual(len(selected), self.expected_size)
@@ -157,7 +157,7 @@ class TestSelection(unittest.TestCase):
         repetitions = 100
         
         for _ in range(repetitions):
-            selected = selector.select(self.individus, self.fitness)
+            selected = selector.select(1/2, self.individus, self.fitness)
             if best_individual in selected:
                 count_best += 1
             if worst_individual in selected:
@@ -172,8 +172,8 @@ class TestSelection(unittest.TestCase):
 
     def test_tournament_with_hope(self):
         """Test du tournoi avec espoir"""
-        selector = Tournament_with_hope()
-        selected = selector.select(self.individus, self.fitness)
+        selector = TournamentWithHopeSelection()
+        selected = selector.select(1/2, self.individus, self.fitness)
         
         # Vérification 1: Taille correcte et individus valides
         self.assertEqual(len(selected), self.expected_size)
@@ -200,7 +200,7 @@ class TestSelection(unittest.TestCase):
         repetitions = 100
         
         for _ in range(repetitions):
-            selected = selector.select(self.individus, self.fitness)
+            selected = selector.select(1/2, self.individus, self.fitness)
             if best_individual in selected:
                 count_best += 1
             if worst_individual in selected:

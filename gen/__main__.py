@@ -5,9 +5,9 @@ from gen.genetic import *
 
 
 benchmark(
-    4, 4,
+    2048, 64, 1/4, 1/8,
     "data/plasmid_8k.fasta",
-    [ Tournament() ],
-    [ ThresholdMutator(SimulatedAnnealingMutation(GaussianAdditiveDeltaMutation(sigma=1), key="sigma", alpha=.99), mutation_probability=.2) for _ in range(1) ],
+    [ TournamentWithHopeSelection(hopeProbability=.01) ],
+    [ ThresholdMutator(SimulatedAnnealingMutation(GaussianAdditiveDeltaMutation(sigma=1), key="sigma", alpha=.995), mutation_probability=.2) for _ in range(1) ],
     [ FitnessWeightedMeanCrossover() ]
 )

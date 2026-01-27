@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 class Selection(ABC):
     @abstractmethod
-    def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
+    def select(self, keepRate: float, individus: list[RotTable], fitness: list[float]) -> list[int]:
         pass
 
     @abstractmethod
@@ -20,16 +20,15 @@ class Elitism(Selection):
         return "Elitism"
 
     # Sélection par elimination des plus faibles
-    def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
+    def select(self, keepRate: float, individus: list[RotTable], fitness: list[float]) -> list[int]:
 
         # Trier les individus par fitness décroissante
         individus_sorted = sorted(range(len(individus)), key=lambda i: fitness[i], reverse=True)
         
         # Garder la moitié des meilleurs
-        half = len(individus_sorted) // 2
-        return [individus[i] for i in individus_sorted[:half]]
+        return individus_sorted[:int(keepRate * len(individus))]
 
-class Tournament(Selection):
+class TournamentSelection(Selection):
     def __init__(self):
         super().__init__()
 
@@ -37,9 +36,9 @@ class Tournament(Selection):
         return "Tournament"
         
     # Sélection par tournoi
-    def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
-        selected: list[RotTable] = []
-        size_of_selection = len(individus) // 2 - 1
+    def select(self, keepRate: float, individus: list[RotTable], fitness: list[float]) -> list[int]:
+        selected: list[int] = []
+        size_of_selection = int(keepRate * len(individus)) - 1
 
         for _ in range(size_of_selection):
             # Choisir 2 individus au hasard
@@ -47,14 +46,14 @@ class Tournament(Selection):
             p2 = random.randint(0, len(individus) - 1)
             # Prendre le meilleur du tournoi
             if fitness[p1] > fitness[p2]:
-                selected.append(individus[p1])
+                selected.append(p1)
             else:
-                selected.append(individus[p2])
+                selected.append(p2)
 
-        return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected
+        return [max(range(len(individus)), key=lambda i: fitness[i])] + selected
 
 
-class Roulette(Selection):
+class RouletteSelection(Selection):
     def __init__(self):
         super().__init__()
 
@@ -62,14 +61,14 @@ class Roulette(Selection):
         return "Roulette"
     
     # Sélection par roulette
-    def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
+    def select(self, keepRate: float, individus: list[RotTable], fitness: list[float]) -> list[int]:
         expFitness = np.exp(np.array(fitness) / 100)
-        indices = np.random.choice(len(individus), len(individus)//2 - 1, p=expFitness / expFitness.sum())
+        indices = np.random.choice(len(individus), int(keepRate * len(individus)) - 1, p=expFitness / expFitness.sum())
 
-        return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + [individus[i] for i in indices]
+        return [max(range(len(individus)), key=lambda i: fitness[i])] + list(indices)
 
 
-class Rank(Selection):
+class RankSelection(Selection):
     def __init__(self):
         super().__init__()
 
@@ -77,9 +76,9 @@ class Rank(Selection):
         return "Rank"
     
     # Sélection par rang
-    def select(self, individus: list[RotTable], fitness: list[float]):
+    def select(self, keepRate: float, individus: list[RotTable], fitness: list[float]):
         selected: list[RotTable] = []
-        size_of_selection = len(individus) // 2 - 1
+        size_of_selection = int(keepRate * len(individus)) - 1
 
         # Trier les individus par fitness croissante (le pire en premier)
         individus_sorted = sorted(range(len(individus)), key=lambda i: fitness[i])
@@ -102,17 +101,18 @@ class Rank(Selection):
 
         return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected
     
-class Tournament_with_hope(Selection):
-    def __init__(self):
+class TournamentWithHopeSelection(Selection):
+    def __init__(self, hopeProbability = 0.001):
         super().__init__()
+        self.hopeProbability = hopeProbability
 
     def __str__(self) -> str:
-        return "Tournament"
+        return "TournamentHope"
         
     # Sélection par tournoi
-    def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
-        selected: list[RotTable] = []
-        size_of_selection = len(individus) // 2 - 1
+    def select(self, keepRate: float, individus: list[RotTable], fitness: list[float]) -> list[int]:
+        selected: list[int] = []
+        size_of_selection = int(keepRate * len(individus)) - 1
 
         for _ in range(size_of_selection):
             # Choisir 2 individus au hasard
@@ -120,16 +120,16 @@ class Tournament_with_hope(Selection):
             p2 = random.randint(0, len(individus) - 1)
             # Prendre le meilleur du tournoi mais le pire a une chance
             p = random.uniform(0, 1)
-            if p < 10**(-3):
+            if p < self.hopeProbability:
                 if fitness[p1] > fitness[p2]:
-                    selected.append(individus[p2])
+                    selected.append(p2)
                 else:
-                    selected.append(individus[p2])
+                    selected.append(p2)
             # Tournoi normal
             else:
                 if fitness[p1] > fitness[p2]:
-                    selected.append(individus[p1])
+                    selected.append(p1)
                 else:
-                    selected.append(individus[p2])
+                    selected.append(p2)
 
-        return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected
+        return [max(range(len(individus)), key=lambda i: fitness[i])] + selected
