@@ -52,7 +52,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
             best_fitness = f
             best_individual_index = i
     
-    if(benchmark):
+    if benchmark and not visualisation:
         print(f"last generation, best fitness: {best_fitness}")
         plt.plot(range(num_generations),list_best_fitness,label=f"Sélection : {selection} et Mutation : {mutation} ")
 
