@@ -87,7 +87,7 @@ class SimulatedAnnealingMutation(Mutation):
         self.mutator = mutator
 
     def __str__(self) -> str:
-        return f"SA({ self.mutator }, $\\alpha: {self.alpha:.3f}$)"
+        return f"SA({ self.mutator }, ${self.key}={self.alpha:.3f}^t$)"
     
     def mutate_population(self, population: list[RotTable], t: int):
         mutated = super().mutate_population(population, t)
