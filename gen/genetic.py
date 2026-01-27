@@ -77,14 +77,19 @@ def benchmark(
     mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ],
     crossovers: list[Crossover] = [ Mean() ]
 ):
+    best_fitness = inf
     for selection in selections:
         for mutation in mutations:
             for crossover in crossovers:
                 print(f"{str(selection)} and {str(mutation)}")
-                genetic_algorithm(num_generations,generation_size,seq_filename, selection, crossover, mutation, True, False)
-
+                rottable, score = genetic_algorithm(num_generations,generation_size,seq_filename, selection, crossover, mutation, True, False)
+                if score < best_fitness:
+                    best_rottable, best_fitness = rottable, score
     plt.legend(loc = 1, prop={ 'size': 6 })
+    plt.xlabel("Génération n")
+    plt.ylabel("Norme du dernier point de la trajectoire pour le meilleur individu de la génération (échelle logarithmique)")
     plt.show()
+    return(best_rottable,best_fitness)
 
 
 def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filename: str):
