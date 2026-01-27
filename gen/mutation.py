@@ -7,15 +7,16 @@ class Mutation(ABC):
         super().__init__()
 
     @abstractmethod
-    def mutateValue (self, e: float, delta: float) -> float:
+    def mutateValue (self, e: float, delta: float, logFit: float) -> float:
         pass
 
     @abstractmethod
     def __str__(self) -> str:
         pass
 
-    def mutate(self, individu: RotTable, t: int) -> RotTable:
+    def mutate(self, individu: RotTable, fitness: float) -> RotTable:
         rot_table_dict = {}
+        logFit = np.log10(-fitness)
 
         for k, dinuc in individu.rot_table.items():
             rot_table_dict[k] = []
@@ -25,13 +26,13 @@ class Mutation(ABC):
                 else:
                     center = rotTableConfig[k][i]
                     delta = rotTableConfig[k][3 + i]
-                    mutated_value = self.mutateValue(e, delta)
+                    mutated_value = self.mutateValue(e, delta, logFit)
                     rot_table_dict[k].append(float(np.clip(mutated_value, center - delta, center + delta)))
 
         return RotTable(rot_table_dict)
     
-    def mutate_population(self, population: list[RotTable], t: int):
-        return [self.mutate(individu, t) for individu in population]
+    def mutate_population(self, population: list[RotTable], fitnesses: list[float]):
+        return [self.mutate(individu, fitness) for individu, fitness in zip(population, fitnesses)]
     
 
 class ThresholdMutator(Mutation):
@@ -44,8 +45,8 @@ class ThresholdMutator(Mutation):
     def __str__(self) -> str:
         return f"T($p = {self.mutation_probability:.2f}$, {self.mutator})"
     
-    def mutateValue(self, e: float, delta: float) -> float:
-        return self.mutator.mutateValue(e, delta) if np.random.random() <= self.mutation_probability else e
+    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
+        return self.mutator.mutateValue(e, delta, logFit) if np.random.random() <= self.mutation_probability else e
 
     
 class GaussianMutator(Mutation):
@@ -63,27 +64,27 @@ class GaussianMutator(Mutation):
 class GaussianAdditiveMutation(GaussianMutator):
     name = "G+"
 
-    def mutateValue(self, e: float, delta: float) -> float:
+    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
         return e + self.gaussian()
 
 class GaussianAdditiveDeltaMutation(GaussianMutator):
     name = "G+$\\Delta$"
 
-    def mutateValue(self, e: float, delta: float) -> float:
+    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
         return e + self.gaussian() * delta
     
 class GaussianMultiplicativeMutation(GaussianMutator):
     name = "G*"
 
-    def mutateValue(self, e: float, delta: float) -> float:
+    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
         return e * np.exp(self.gaussian())
     
 
 class GaussianAdditiveDeltaLog10FitnessAnnealedMutation(GaussianMutator):
     name = "G+$\\DeltaF$"
 
-    def mutateValue(self, e: float, delta: float) -> float:
-        return e + self.gaussian() * delta #* logFit
+    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
+        return e + self.gaussian() * delta * logFit
     
 class SimulatedAnnealingMutation(Mutation):
     """We lower the chance of mutation as the simulation goes on"""
@@ -97,12 +98,12 @@ class SimulatedAnnealingMutation(Mutation):
     def __str__(self) -> str:
         return f"SA({ self.mutator }, ${self.key}={self.alpha:.3f}^t$)"
     
-    def mutate_population(self, population: list[RotTable], t: int):
-        mutated = super().mutate_population(population, t)
+    def mutate_population(self, population: list[RotTable], fitnesses: list[float]):
+        mutated = super().mutate_population(population, fitnesses)
 
         setattr(self.mutator, self.key, getattr(self.mutator, self.key) * self.alpha)
 
         return mutated
     
-    def mutateValue(self, e: float, delta: float) -> float:
-        return self.mutator.mutateValue(e, delta)
+    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
+        return self.mutator.mutateValue(e, delta, logFit)

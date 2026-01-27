@@ -29,7 +29,7 @@ class Elitism(Selection):
         half = len(individus_sorted) // 2
         return [individus[i] for i in individus_sorted[:half]]
 
-class Tournament(Selection):
+class TournamentSelection(Selection):
     def __init__(self):
         super().__init__()
 
@@ -54,7 +54,7 @@ class Tournament(Selection):
         return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected
 
 
-class Roulette(Selection):
+class RouletteSelection(Selection):
     def __init__(self):
         super().__init__()
 
@@ -69,7 +69,7 @@ class Roulette(Selection):
         return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + [individus[i] for i in indices]
 
 
-class Rank(Selection):
+class RankSelection(Selection):
     def __init__(self):
         super().__init__()
 
@@ -102,12 +102,13 @@ class Rank(Selection):
 
         return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected
     
-class Tournament_with_hope(Selection):
-    def __init__(self):
+class TournamentWithHopeSelection(Selection):
+    def __init__(self, hopeProbability = 0.001):
         super().__init__()
+        self.hopeProbability = hopeProbability
 
     def __str__(self) -> str:
-        return "Tournament"
+        return "TournamentHope"
         
     # Sélection par tournoi
     def select(self, individus: list[RotTable], fitness: list[float]) -> list[RotTable]:
@@ -120,7 +121,7 @@ class Tournament_with_hope(Selection):
             p2 = random.randint(0, len(individus) - 1)
             # Prendre le meilleur du tournoi mais le pire a une chance
             p = random.uniform(0, 1)
-            if p < 10**(-3):
+            if p < self.hopeProbability:
                 if fitness[p1] > fitness[p2]:
                     selected.append(individus[p2])
                 else:

@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from gen.selection import Elitism, Tournament, Roulette, Rank, Tournament_with_hope
+from gen.selection import Elitism, TournamentSelection, RouletteSelection, RankSelection, TournamentWithHopeSelection
 from dna.RotTable import RotTable
 from dna.Traj3D import Traj3D
 from gen.fitness import Fitness
@@ -44,7 +44,7 @@ class TestSelection(unittest.TestCase):
 
     def test_tournament_favors_best(self):
         """Test du tournoi"""
-        selector = Tournament()
+        selector = TournamentSelection()
         selected = selector.select(self.individus, self.fitness)
         
         # Vérification 1: Taille correcte et individus valides
@@ -87,7 +87,7 @@ class TestSelection(unittest.TestCase):
     def test_roulette_probabilistic_selection(self):
         """Test de la roulette"""
 
-        selector = Roulette()
+        selector = RouletteSelection()
         selected = selector.select(self.individus, self.fitness)
         
         # Vérification 1: Taille correcte et individus valides
@@ -130,7 +130,7 @@ class TestSelection(unittest.TestCase):
     def test_rank_based_selection(self):
         """Test du rang"""
 
-        selector = Rank()
+        selector = RankSelection()
         selected = selector.select(self.individus, self.fitness)
         
         # Vérification 1: Taille correcte et individus valides
@@ -172,7 +172,7 @@ class TestSelection(unittest.TestCase):
 
     def test_tournament_with_hope(self):
         """Test du tournoi avec espoir"""
-        selector = Tournament_with_hope()
+        selector = TournamentWithHopeSelection()
         selected = selector.select(self.individus, self.fitness)
         
         # Vérification 1: Taille correcte et individus valides

@@ -1,7 +1,7 @@
 from gen.fitness import Fitness
 from gen.crossover import Crossover, MeanCrossover, FitnessWeightedMeanCrossover
-from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation, ThresholdMutator
-from gen.selection import Roulette, Rank, Tournament, Elitism, Selection
+from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation, ThresholdMutator, GaussianAdditiveDeltaLog10FitnessAnnealedMutation
+from gen.selection import RouletteSelection, RankSelection, TournamentSelection, Elitism, Selection, TournamentWithHopeSelection
 from math import inf
 import statistics
 from dna.Traj3D import Traj3D
@@ -26,6 +26,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
 
     
     list_best_fitness = []
+    list_medians = []
     for g in range(num_generations):
         best_fitness = -inf
         for i in range(generation_size):
@@ -37,11 +38,13 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
         if(benchmark):
             avg = sum(eval) / len(eval)
             sd = np.sqrt(sum([e ** 2 for e in eval]) / len(eval) - avg ** 2)
-            print(f"generation: {g}, best fitness: {best_fitness}, med: {statistics.median(eval)}, avg: {avg}, sd: {sd}")
+            med = statistics.median(eval)
+            list_medians.append(med)
+            print(f"generation: {g}, best fitness: {best_fitness}, med: {med}, avg: {avg}, sd: {sd}")
             list_best_fitness.append(best_fitness)
         selected = selection.select(currentGeneration, eval)
         crossed = crossover.make_full_population(selected, generation_size - len(selected), eval)
-        mutated = mutation.mutate_population(crossed, g)
+        mutated = mutation.mutate_population(crossed, eval)
 
         currentGeneration = selected + mutated
     
@@ -56,7 +59,8 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
     
     if benchmark and not visualisation:
         print(f"last generation, best fitness: {best_fitness}")
-        plt.plot(range(num_generations), np.log10(-np.array(list_best_fitness)), label=f"Sélection: {selection} et Mutation: {mutation} ")
+        plt.plot(range(num_generations), np.log10(-np.array(list_best_fitness)), label=f"Avg - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
+        plt.plot(range(num_generations), np.log10(-np.array(list_medians)), label=f"Med - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
 
     if visualisation:
         traj3d.compute(seq,currentGeneration[best_individual_index],True)
@@ -74,7 +78,7 @@ def benchmark(
     num_generations: int,
     generation_size: int,
     seq_filename: str,
-    selections: list[Selection] = [ Elitism(), Roulette(), Rank(), Tournament() ],
+    selections: list[Selection] = [ Elitism(), RouletteSelection(), RankSelection(), TournamentSelection() ],
     mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ],
     crossovers: list[Crossover] = [ MeanCrossover() ]
 ):
@@ -92,7 +96,7 @@ def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filen
     for random_var in np.linspace(-0.4,-0.2,10):
         sigma = 10**random_var
         mutation = GaussianAdditiveDeltaMutation(sigma)
-        selection = Roulette()
+        selection = RouletteSelection()
         crossover = MeanCrossover()
         genetic_algorithm(num_generations,generation_size,seq_filename, selection, crossover, mutation, True)
     plt.legend(loc = 1)
