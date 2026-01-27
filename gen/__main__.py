@@ -1,6 +1,6 @@
 from gen.fitness import Fitness
 from gen.crossover import Crossover
-from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation
+from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation
 from gen.selection import Roulette, Rank, Tournament, Elitism, Selection
 from math import inf
 from dna.Traj3D import Traj3D
@@ -59,14 +59,32 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
 
     return currentGeneration[best_individual_index], best_fitness
 
-def benchmark_selection_method(num_generations: int, generation_size: int, seq_filename: str):
-    selections = { Elitism(), Roulette(), Rank(), Tournament() }
-    mutations = { GaussianAdditiveMutation(), GaussianMultiplicativeMutation() }
+def benchmark(
+    num_generations: int,
+    generation_size: int,
+    seq_filename: str,
+    selections: list[Selection],
+    mutations: list[Mutation],
+):
     for selection in selections:
         for mutation in mutations:            
             genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True)
-    plt.legend(loc = 1)
+
+    plt.legend(loc = 4)
     plt.show()
+
+def benchmark_selection_method(
+    num_generations: int,
+    generation_size: int,
+    seq_filename: str
+):
+    benchmark(
+        num_generations,
+        generation_size,
+        seq_filename,
+        selections = [ Elitism(), Roulette(), Rank(), Tournament() ],
+        mutations = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation(), GaussianAdditiveDeltaMutation() ]
+    )
 
 def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filename: str):
     for random_var in np.linspace(-0.4,-0.2,10):
@@ -74,9 +92,15 @@ def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filen
         mutation = GaussianAdditiveDeltaMutation(sigma)
         selection = Roulette()
         genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True)
-    plt.legend(loc = 1)
+    plt.legend(loc = 4)
     plt.show()
 
-genetic_algorithm(10,1000,"data/test_1.fasta",Rank(),GaussianAdditiveDeltaMutation(5),True)
-plt.legend(loc = 4)
-plt.show()
+benchmark_selection_method(32, 128, "data/test_1.fasta")
+
+# benchmark(32, 128, "data/test_1.fasta",
+#     [ Roulette() ],
+#     [ SimulatedAnnealingMutation(GaussianAdditiveDeltaMutation), GaussianAdditiveDeltaMutation() ]
+# )
+
+# plt.legend(loc = 4)
+# plt.show()

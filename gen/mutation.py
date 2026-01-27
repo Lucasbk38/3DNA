@@ -1,4 +1,5 @@
 from dna.RotTable import RotTable, rotTableConfig
+from typing import Callable
 from abc import ABC, abstractmethod
 import numpy as np
 
@@ -20,38 +21,46 @@ class Mutation(ABC):
         return [self.mutate(individu) for individu in population]
     
 
-class GaussianAdditiveMutation(Mutation):
+class GaussianMutation(Mutation):
+    name = ""
+
     def __init__(self, sigma=1.) -> None:
         super().__init__()
 
         self.sigma = sigma
 
     def __str__(self) -> str:
-        return f"G+, $\\sigma = {self.sigma}$"
-
-    def mutateValue(self, e: float) -> float:
-        return e + np.random.normal(0, self.sigma)
-
-class GaussianAdditiveDeltaMutation(Mutation):
-    def __init__(self, sigma=1.) -> None:
-        super().__init__()
-
-        self.sigma = sigma
-
-    def __str__(self) -> str:
-        return f"G+$\\Delta$, $\\sigma = {self.sigma}$"
+        return f"{self.name}, $\\sigma = {self.sigma}$"
+    
+    def gaussian (self):
+        return np.random.normal(0, self.sigma)
+    
+class GaussianAdditiveMutation(GaussianMutation):
+    name = "G+"
 
     def mutateValue(self, e: float, delta: float) -> float:
-        return e + np.random.normal(0, self.sigma) * delta
+        return e + self.gaussian()
+
+class GaussianAdditiveDeltaMutation(GaussianMutation):
+    name = "G+$\\Delta$"
+
+    def mutateValue(self, e: float, delta: float) -> float:
+        return e + self.gaussian() * delta
     
-class GaussianMultiplicativeMutation(Mutation):
-    def __init__(self, sigma=1.) -> None:
+class GaussianMultiplicativeMutation(GaussianMutation):
+    name = "G*"
+
+    def mutateValue(self, e: float, delta: float) -> float:
+        return e * np.exp(self.gaussian())
+    
+class SimulatedAnnealingMutation(Mutation):
+    def __init__(self, mutationClass) -> None:
         super().__init__()
 
-        self.sigma = sigma
+        self.mutationClass = mutationClass
 
     def __str__(self) -> str:
-        return f"G*, $\\sigma = {self.sigma}$"
-
-    def mutateValue(self, e: float) -> float:
-        return e * np.exp(np.random.normal(0, self.sigma))
+        return f"SA({ self.mutationClass.name })"
+    
+    def mutateValue(self, *args) -> float:
+        return self.mutationClass().mutateValue(*args)
