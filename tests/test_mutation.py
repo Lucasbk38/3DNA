@@ -50,7 +50,7 @@ class TestMutations(unittest.TestCase):
 
     def test_mutations_GAM(self):
         """Test que les mutations de type GaussianAdditive respectent les intervalles de valeurs"""
-        mutated_individu = GaussianAdditiveMutation().mutate(self.individu, 0)
+        mutated_individu = GaussianAdditiveMutation().mutate(self.individu, -1)
         for k, dinuc in mutated_individu.rot_table.items():
             for i, val in enumerate(dinuc):
                 if self.individu.rot_table[k][i] >= 2:
@@ -62,7 +62,7 @@ class TestMutations(unittest.TestCase):
 
     def test_mutations_GADM(self):
         """Test que les mutations de type GaussianAdditiveDelta respectent les intervalles de valeurs"""
-        mutated_individu = GaussianAdditiveDeltaMutation().mutate(self.individu, 0)
+        mutated_individu = GaussianAdditiveDeltaMutation().mutate(self.individu, -1)
         for k, dinuc in mutated_individu.rot_table.items():
             for i, val in enumerate(dinuc):
                 if self.individu.rot_table[k][i] >= 2:
@@ -74,7 +74,7 @@ class TestMutations(unittest.TestCase):
 
     def test_mutations_GMM(self):
         """Test que les mutations de type GaussianMultiplicative respectent les intervalles de valeurs"""
-        mutated_individu = GaussianMultiplicativeMutation().mutate(self.individu, 0)
+        mutated_individu = GaussianMultiplicativeMutation().mutate(self.individu, -1)
         for k, dinuc in mutated_individu.rot_table.items():
             for i, val in enumerate(dinuc):
                 if self.individu.rot_table[k][i] >= 2:
