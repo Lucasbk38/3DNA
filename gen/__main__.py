@@ -7,11 +7,15 @@ from dna.Traj3D import Traj3D
 import matplotlib.pyplot as plt
 from dna.RotTable import RotTable
 import numpy as np
+from json import load as json_load
 
-def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection: Selection, mutation: Mutation, benchmark = False):
+rotTableConfig: dict[str, list[float]] = json_load(open('./dna/table.json'))
+defaultRotTable = {k: rotTableConfig[k][:3] for k in rotTableConfig}
+
+def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: str, selection: Selection, mutation: Mutation, benchmark = False, visualisation = False, comparison = False):
     fitness = Fitness()
     crossover = Crossover()
-    traj3d = Traj3D(False)
+    traj3d = Traj3D(visualisation)
 
     if benchmark: #if we want to plot the result
         best_indiv = []
@@ -57,6 +61,16 @@ def genetic_algorithm(num_generations: int, generation_size: int, seq_filename: 
         print(f"last generation, best fitness: {best_fitness}")
         plt.plot(range(num_generations),list_best_fitness,label=f"Sélection : {selection} et Mutation : {mutation} ")
 
+    if visualisation:
+        traj3d.compute(seq,currentGeneration[best_individual_index],True)
+        traj3d.draw()
+    if comparison:
+        fit = Fitness()
+        traj = Traj3D(True)
+        print(f"Before modifying the rotation table the last point had a norm of : {fit.evaluate(RotTable(defaultRotTable),traj,seq)}")
+        traj.compute(seq,RotTable(defaultRotTable),True)
+        traj.draw()
+    
     return currentGeneration[best_individual_index], best_fitness
 
 def benchmark_selection_method(num_generations: int, generation_size: int, seq_filename: str):
@@ -64,8 +78,8 @@ def benchmark_selection_method(num_generations: int, generation_size: int, seq_f
     mutations = { GaussianAdditiveMutation(), GaussianMultiplicativeMutation() }
     for selection in selections:
         for mutation in mutations:            
-            genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True)
-    plt.legend(loc = 1)
+            genetic_algorithm(num_generations,generation_size,seq_filename, selection, mutation, True, True)
+    plt.legend(loc = 4)
     plt.show()
 
 def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filename: str):
@@ -77,6 +91,5 @@ def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filen
     plt.legend(loc = 1)
     plt.show()
 
-genetic_algorithm(30, 30, "data/test_1.fasta", Rank(), GaussianAdditiveDeltaMutation(5), True)
-plt.legend(loc = 4)
-plt.show()
+
+genetic_algorithm(15,1000,"data/plasmid_8k.fasta",Roulette(),GaussianAdditiveDeltaMutation(5),True,True,True)
