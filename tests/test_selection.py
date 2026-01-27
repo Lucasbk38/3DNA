@@ -1,5 +1,4 @@
 import unittest
-import random
 import numpy as np
 from gen.selection import Elitism, Tournament, Roulette, Rank
 from dna.RotTable import RotTable
@@ -14,7 +13,6 @@ class TestSelection(unittest.TestCase):
 
     def setUp(self):
         """Crée une population de test avec des fitness réelles."""
-        random.seed(42)
         np.random.seed(42)
         
         self.population_size = 10
