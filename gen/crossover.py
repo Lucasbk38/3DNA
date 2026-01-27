@@ -42,7 +42,7 @@ class FitnessWeightedMeanCrossover(Crossover):
 
             rot_table_dict = {}
             for k,v in parent1.rot_table.items():
-                #On multiplie par la fitenss de l'autre parent car plus grande est la fitness en valeur absolute,
+                #On multiplie par la fitness de l'autre parent car plus grande est la fitness en valeur absolute,
                 #plus elle est mauvaise (car la fitness est négative)
                 rot_table_dict[k] = [(parent1.rot_table[k][i] * fitness[parent_index2] + parent2.rot_table[k][i] * fitness[parent_index1]) \
                                       / (fitness[parent_index1] + fitness[parent_index2]) for i in range(len(v))]
