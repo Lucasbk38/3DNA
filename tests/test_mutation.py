@@ -21,7 +21,7 @@ class TestMutations(unittest.TestCase):
         self.sa_mutator = SimulatedAnnealingMutation(mutator=self.base_mutator, key="sigma", alpha=0.5)
 
     def test_values_above_threshold_are_not_mutated(self):
-        """Forcer une valeur >= 2"""
+        """Conservation des valeurs supérieures ou égale à 2"""
         for k in self.individu.rot_table:
             self.individu.rot_table[k][0] = 2.5
 
@@ -49,7 +49,7 @@ class TestMutations(unittest.TestCase):
         self.assertEqual(len(mutated_pop), len(self.population))
 
     def test_mutations_GAM(self):
-        """Test que les mutations de type GaussianAdditive respectent les intervalles de valeurs"""
+        """Teste que les mutations de type GaussianAdditive respectent les intervalles de valeurs"""
         mutated_individu = GaussianAdditiveMutation().mutate(self.individu, -1)
         for k, dinuc in mutated_individu.rot_table.items():
             for i, val in enumerate(dinuc):
@@ -61,7 +61,7 @@ class TestMutations(unittest.TestCase):
                     self.assertTrue(min_val <= val <= max_val)
 
     def test_mutations_GADM(self):
-        """Test que les mutations de type GaussianAdditiveDelta respectent les intervalles de valeurs"""
+        """Teste que les mutations de type GaussianAdditiveDelta respectent les intervalles de valeurs"""
         mutated_individu = GaussianAdditiveDeltaMutation().mutate(self.individu, -1)
         for k, dinuc in mutated_individu.rot_table.items():
             for i, val in enumerate(dinuc):
@@ -73,7 +73,7 @@ class TestMutations(unittest.TestCase):
                     self.assertTrue(min_val <= val <= max_val)
 
     def test_mutations_GMM(self):
-        """Test que les mutations de type GaussianMultiplicative respectent les intervalles de valeurs"""
+        """Teste que les mutations de type GaussianMultiplicative respectent les intervalles de valeurs"""
         mutated_individu = GaussianMultiplicativeMutation().mutate(self.individu, -1)
         for k, dinuc in mutated_individu.rot_table.items():
             for i, val in enumerate(dinuc):
@@ -86,7 +86,7 @@ class TestMutations(unittest.TestCase):
 
 
     def test_alpha_decay(self):
-        """Test que le paramètre sigma diminue correctement avec le facteur alpha à chaque appel"""
+        """Teste que le paramètre sigma diminue correctement avec le facteur alpha à chaque appel"""
         initial_sigma = self.base_mutator.sigma
         alpha = self.sa_mutator.alpha
 
@@ -103,7 +103,7 @@ class TestMutations(unittest.TestCase):
             self.assertIsInstance(p, RotTable)
 
     def test_threshold_mutator_zero_probability(self):
-        """Test que l'individu ne change pas"""
+        """Teste que l'individu ne change pas"""
         base = GaussianAdditiveMutation(sigma=10.0)
         threshold = ThresholdMutator(base, mutation_probability=0.0)
 
@@ -112,7 +112,7 @@ class TestMutations(unittest.TestCase):
         self.assertEqual(mutated.rot_table, self.individu.rot_table)
 
     def test_threshold_mutator_full_probability(self):
-        """Test que l'individu mute toujours"""
+        """Teste que l'individu mute toujours"""
         np.random.seed(0)
         base = GaussianAdditiveMutation(sigma=1.0)
         threshold = ThresholdMutator(base, mutation_probability=1.0)
