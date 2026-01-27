@@ -90,9 +90,9 @@ def benchmark(
                     best_rottable, best_fitness = rottable, score
     plt.legend(loc = 1, prop={ 'size': 6 })
     plt.xlabel("Génération n")
-    plt.ylabel("Norme du dernier point de la trajectoire pour le meilleur individu de la génération (échelle logarithmique)")
+    plt.ylabel("Evaluation du meilleur individu de la génération (échelle logarithmique)")
     plt.show()
-    with open(f"best_rottable_{seq_filename}", 'w') as file:
+    with open("gen/best_rottable.json", 'w') as file:
             json_dump(best_rottable.rot_table, file)
 
 
