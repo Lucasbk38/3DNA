@@ -14,7 +14,10 @@ class Mutation(ABC):
         pass
 
     def mutate(self, individu: RotTable) -> RotTable:
-        return RotTable({ k: [e if e >= 2 else np.clip(self.mutateValue(e, rotTableConfig[k][3 + i]), rotTableConfig[k][i] - rotTableConfig[k][3 + i], rotTableConfig[k][i] + rotTableConfig[k][3 + i]) for i, e in enumerate(dinuc)] for k, dinuc in individu.rot_table.items() })
+        return RotTable({ k: [e if e >= 2 else float(np.clip( \
+            self.mutateValue(e, rotTableConfig[k][3 + i]), rotTableConfig[k][i] - rotTableConfig[k][3 + i], \
+            rotTableConfig[k][i] + rotTableConfig[k][3 + i])) for i, e in enumerate(dinuc)] \
+            for k, dinuc in individu.rot_table.items() })
     
     def mutate_population(self, population: list[RotTable]):
         return [self.mutate(individu) for individu in population]
