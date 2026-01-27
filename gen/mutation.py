@@ -79,6 +79,7 @@ class GaussianMultiplicativeMutation(GaussianMutator):
         return e * np.exp(self.gaussian())
     
 class SimulatedAnnealingMutation(Mutation):
+    """We lower the chance of mutation as the simulation goes on"""
     def __init__(self, mutator: Mutation, key: str, alpha = 1.) -> None:
         super().__init__()
 
