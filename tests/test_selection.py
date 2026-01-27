@@ -53,10 +53,20 @@ class TestSelection(unittest.TestCase):
             self.assertIn(ind, self.individus)
         
         # Vérification 2: Le meilleur doit être sélectionné plus souvent
-        best_individual = self.individus[np.argmax(self.fitness)]
+        # indices triés du plus grand au plus petit
+        sorted_indices = np.argsort(self.fitness)[::-1]
+
+        # meilleur individu
+        best_individual = self.individus[sorted_indices[0]]
+
+        # deuxième meilleur
+        second_best_individual = self.individus[sorted_indices[1]]
+
+        # Le pire individu
         worst_individual = self.individus[np.argmin(self.fitness)]
         
         count_best = 0
+        count_second_best = 0
         count_worst = 0
         repetitions = 100
         
@@ -66,9 +76,13 @@ class TestSelection(unittest.TestCase):
                 count_best += 1
             if worst_individual in selected:
                 count_worst += 1
+            if second_best_individual in selected:
+                count_second_best += 1
         
-        # Le meilleur doit être sélectionné plus souvent que le pire
-        self.assertGreater(count_best, count_worst, f"Le meilleur doit être sélectionné plus souvent ({count_best} vs {count_worst})")
+        # Le meilleur doit toujours être sélectionné.
+        # Les meilleurs ont plus de chances d'être sélectionnés
+        self.assertGreater(count_second_best, count_worst, f"Le meilleur doit être sélectionné plus souvent ({count_best} vs {count_worst})")
+        self.assertEqual(count_best, repetitions)
 
     def test_roulette_probabilistic_selection(self):
         """Test de la roulette"""
@@ -82,10 +96,20 @@ class TestSelection(unittest.TestCase):
             self.assertIn(ind, self.individus)
         
         # Vérification 2: Les meilleurs ont plus de chances
-        best_individual = self.individus[np.argmax(self.fitness)]
+       # indices triés du plus grand au plus petit
+        sorted_indices = np.argsort(self.fitness)[::-1]
+
+        # meilleur individu
+        best_individual = self.individus[sorted_indices[0]]
+
+        # deuxième meilleur
+        second_best_individual = self.individus[sorted_indices[1]]
+
+        # Le pire individu
         worst_individual = self.individus[np.argmin(self.fitness)]
         
         count_best = 0
+        count_second_best = 0
         count_worst = 0
         repetitions = 100
         
@@ -95,9 +119,13 @@ class TestSelection(unittest.TestCase):
                 count_best += 1
             if worst_individual in selected:
                 count_worst += 1
+            if second_best_individual in selected:
+                count_second_best += 1
         
-        # Le meilleur doit être sélectionné significativement plus souvent que le pire
-        self.assertGreater(count_best, count_worst, f"Roulette: Le meilleur doit avoir plus de chances ({count_best} vs {count_worst})")
+        # Le meilleur doit toujours être sélectionné.
+        # Les meilleurs ont plus de chances d'être sélectionnés
+        self.assertGreater(count_second_best, count_worst, f"Roulette: Le meilleur doit avoir plus de chances ({count_best} vs {count_worst})")
+        self.assertEqual(count_best, repetitions)
 
     def test_rank_based_selection(self):
         """Test du rang"""
@@ -111,10 +139,20 @@ class TestSelection(unittest.TestCase):
             self.assertIn(ind, self.individus)
         
         # Vérification 2: Les meilleurs ont plus de chances
-        best_individual = self.individus[np.argmax(self.fitness)]
+        # indices triés du plus grand au plus petit
+        sorted_indices = np.argsort(self.fitness)[::-1]
+
+        # meilleur individu
+        best_individual = self.individus[sorted_indices[0]]
+
+        # deuxième meilleur
+        second_best_individual = self.individus[sorted_indices[1]]
+        
+        # Le pire individu
         worst_individual = self.individus[np.argmin(self.fitness)]
         
         count_best = 0
+        count_second_best = 0
         count_worst = 0
         repetitions = 100
         
@@ -124,12 +162,16 @@ class TestSelection(unittest.TestCase):
                 count_best += 1
             if worst_individual in selected:
                 count_worst += 1
+            if second_best_individual in selected:
+                count_second_best += 1
         
-        # Le meilleur doit être sélectionné plus souvent que le pire
-        self.assertGreater(count_best, count_worst, f"Rang: Le meilleur doit être sélectionné plus souvent ({count_best} vs {count_worst})")
+        # Le meilleur doit toujours être sélectionné.
+        # Les meilleurs ont plus de chances d'être sélectionnés
+        self.assertGreater(count_second_best, count_worst, f"Rang: Le meilleur doit être sélectionné plus souvent ({count_best} vs {count_worst})")
+        self.assertEqual(count_best, repetitions)
 
     def test_tournament_with_hope(self):
-        """Test du tournoi"""
+        """Test du tournoi avec espoir"""
         selector = Tournament_with_hope()
         selected = selector.select(self.individus, self.fitness)
         
@@ -139,10 +181,21 @@ class TestSelection(unittest.TestCase):
             self.assertIn(ind, self.individus)
         
         # Vérification 2: Le meilleur doit être sélectionné plus souvent
-        best_individual = self.individus[np.argmax(self.fitness)]
+
+        # indices triés du plus grand au plus petit
+        sorted_indices = np.argsort(self.fitness)[::-1]
+
+        # meilleur individu
+        best_individual = self.individus[sorted_indices[0]]
+
+        # deuxième meilleur
+        second_best_individual = self.individus[sorted_indices[1]]
+
+        # Le pire individu
         worst_individual = self.individus[np.argmin(self.fitness)]
         
         count_best = 0
+        count_second_best = 0
         count_worst = 0
         repetitions = 100
         
@@ -152,9 +205,13 @@ class TestSelection(unittest.TestCase):
                 count_best += 1
             if worst_individual in selected:
                 count_worst += 1
+            if second_best_individual in selected:
+                count_second_best += 1
         
-        # Le meilleur doit être sélectionné plus souvent que le pire
-        self.assertGreater(count_best, count_worst, f"Le meilleur doit être sélectionné plus souvent ({count_best} vs {count_worst})")
+        # Le meilleur doit toujours être sélectionné.
+        # Les meilleurs ont plus de chances d'être sélectionnés
+        self.assertGreater(count_second_best, count_worst, f"Le meilleur doit être sélectionné plus souvent ({count_best} vs {count_worst})")
+        self.assertEqual(count_best, repetitions)
 
 
 
