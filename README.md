@@ -41,6 +41,8 @@ On utilise un algorithme génétique classique qui suit ces étapes:
 - **Sélection** : On sélectionne, en introduisant ou non de l'aléatoire, une partie de nos individus selon certaines règles qui dépendent de leur évaluation.  
 - **Reproduction** : On choisit deux parents parmi les individus sélectionnés et on construit un enfant avec les règles de construction qu'on a définies.  
 - **Mutation** : On tire au sort certains individus (parfois uniquement les enfants) que l'on modifie légèrement.
+
+
 On réitère les étapes autant de fois que l'on veut de générations. Une classe est implémentée pour chaque étape.
 
 
@@ -50,32 +52,30 @@ Le dossier 3DNA contient 3 dossier:
 
 
 - le dossier **dna** contient:
-
-- le fichier Traj3D.py implémentant le moteur de calcul d'une trajectoire 3D,
-- le fichier Rot_Table.py contenant la table de rotations (avec les écart-types) nécessaires au calcul d'une trajectoire 3D,
-- le fichier Main.py illustrant un exemple d'utilisation de la classe Traj3D.
+    - le fichier `Traj3D.py` implémentant le moteur de calcul d'une trajectoire 3D,
+    - le fichier `Rot_Table.py` contenant la table de rotations (avec les écart-types) nécessaires au calcul d'une trajectoire 3D,
+    - le fichier `main.py` illustrant un exemple d'utilisation de la classe Traj3D.
 
 - le dossier **gen** contient:
+    - le fichier `genetic.py` et `main.py` permettent de renvoyer le score du meilleur individu de la dernière génération. De plus, on obtient les courbes de la moyenne, la médiane, l'écart-type et le score du meilleur individu en fonction de la n-ème génération (échelle log).
+    - le fichier `selection.py` définit les différentes méthodes de sélections à travers des classes (**Élitisme**, **Roulette**, **Rang**, **Tournoi** et **Tournoi avec espoir**)
+    - le fichier `mutation.py` définit les différents types de mutations à travers des classes (**GaussianAdditiveMutation**, **GaussianAdditiveDeltaMutation**, **GaussianMultiplicativeMutation**, **GaussianAdditiveDeltaLog10FitnessAnnealedMutation**). De plus, **SimulatedAnnealingMutation** dans mutation.py retranscrit l'idée de **recuit simulé**
+    - le fichier `crossover.py` définit les différents types de croisement à travers des classes (**MeanCrossover**, **FitnessWeightedMeanCrossover**, **ChooseBetweenParentsCrossover**)
+    - le fichier `fitness.py` définit la manière d'évaluer un individu (l'opposé de la distance euclidenne entre le point départ et le point d'arrivée de la séquence d'ADN après avoir effectué les opérations de la table de rotation). On cherche à maximiser la fitness.
+    - le fichier `result_on_plasmid.py` garde la meilleure table de rtotation trouvée pour un plasmide de taille 8k et 180k
 
-- le fichier genetic.py et main.py permettent de renvoyer le score du meilleur individu de la dernière génération. De plus, on obtient les courbes de la moyenne, la médiane, l'écart-type et le score du meilleur individu en fonction de la n-ème génération (échelle log).
-- le fichier selection.py définit les différentes méthodes de sélections à travers des classes (**Élitisme**, **Roulette**, **Rang**, **Tournoi** et **Tournoi avec espoir**)
-- le fichier mutation.py définit les différents types de mutations à travers des classes (**GaussianAdditiveMutation**, **GaussianAdditiveDeltaMutation**, **GaussianMultiplicativeMutation**, **GaussianAdditiveDeltaLog10FitnessAnnealedMutation**). De plus, **SimulatedAnnealingMutation** dans mutation.py retranscrit l'idée de **recuit simulé**
-- le fichier crossover.py définit les différents types de croisement à travers des classes (**MeanCrossover**, **FitnessWeightedMeanCrossover**, **ChooseBetweenParentsCrossover**)
-- le fichier fitness.py définit la manière d'évaluer un individu (l'opposé de la distance euclidenne entre le point départ et le point d'arrivée de la séquence d'ADN après avoir effectué les opérations de la table de rotation). On cherche à maximiser la fitness.
-- le fichier result_on_plasmid.py garde la meilleure table de rtotation trouvée pour un plasmide de taille 8k et 180k
-
-- le dossier **tests** contient tous les tests unitaires pour mutation.py (test_mutation.py), selection.py (test_selection.py), RotTable.py (test_RotTable.py (celui de l'énoncé)) et crossover.py (test_crossover.py) afin de s'assurer un bon recouvrement du code (au delà de 80%)
+- le dossier **tests** contient tous les tests unitaires pour `mutation.py` (`test_mutation.py`), `selection.py` (`test_selection.py`), `RotTable.py` (`test_RotTable.py` (celui de l'énoncé)) et `crossover.py` (`test_crossover.py`) afin de s'assurer un bon recouvrement du code (au delà de 80%)
 
 ## Exécution du code
 
-Pour exécuter genetic.py ou main.py, il suffit de saisir **python -m gen** dans le terminal.
+Pour exécuter genetic.py ou main.py, il suffit de saisir `python -m gen` dans le terminal.
 Vous pouvez vous amuser en changeant le type de mutation, de sélection et de croisement
-Assurez-vous d'avoir installer les modules nécessaires dans requirements.txt
+Assurez-vous d'avoir installer les modules nécessaires dans `requirements.txt`
 Le score du meilleur individu, la moyenne, la médiane et l'écart type seront donné pour chaque génération jusqu'à la dernière génération. Un graphique contenant les courbes s'affichera.
 
-Pour exécuter tous les tests, il suffit de saisir **converage run -m pytest**
-Pour voir le recouvrement d'un fichier, il suffit de saisir python -m pytest tests/test_**nom_voulu**.py --cov=gen.**nom_voulu** --cov-report=term-missing
-Assurez-vous d'avoir installer le module pytest et pytest-cov
+Pour exécuter tous les tests, il suffit de saisir `converage run -m pytest`
+Pour voir le recouvrement d'un fichier, il suffit de saisir `python -m pytest tests/test_**nom_voulu**.py --cov=gen.**nom_voulu** --cov-report=term-missing`
+Assurez-vous d'avoir installer le module `pytest` et `pytest-cov`
 
 
 
