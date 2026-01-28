@@ -16,7 +16,7 @@ class Mutation(ABC):
 
     def mutate(self, individu: RotTable, fitness: float) -> RotTable:
         rot_table_dict = {}
-        logFit = np.log10(-fitness)
+        logFit = np.log10(1 - fitness)
 
         for k, dinuc in individu.rot_table.items():
             rot_table_dict[k] = []
@@ -33,8 +33,46 @@ class Mutation(ABC):
     
     def mutate_population(self, population: list[RotTable], fitnesses: list[float]):
         return [self.mutate(individu, fitness) for individu, fitness in zip(population, fitnesses)]
+
+
+    
+class GaussianMutation(Mutation):
+    name = ""
+
+    def __init__(self, sigma=1.) -> None:
+        self.sigma = sigma
+
+    def __str__(self) -> str:
+        return f"{self.name}, $\\sigma = {self.sigma:.2f}$"
+    
+    def gaussian (self):
+        return np.random.normal(0, self.sigma)
+    
+class GaussianAdditiveMutation(GaussianMutation):
+    name = "G+"
+
+    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
+        return e + self.gaussian()
+
+class GaussianAdditiveDeltaMutation(GaussianMutation):
+    name = "G+$\\Delta$"
+
+    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
+        return e + self.gaussian() * delta
+    
+class GaussianMultiplicativeMutation(GaussianMutation):
+    name = "G*"
+
+    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
+        return e * np.exp(self.gaussian())
     
 
+class GaussianAdditiveDeltaLog10FitnessAnnealedMutation(GaussianMutation):
+    name = "G+$\\Delta F$"
+
+    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
+        return e + self.gaussian() * delta * logFit
+    
 class ThresholdMutation(Mutation):
     def __init__(self, mutator: Mutation, mutation_probability = 0.1) -> None:
         super().__init__()
@@ -47,63 +85,25 @@ class ThresholdMutation(Mutation):
     
     def mutateValue(self, e: float, delta: float, logFit: float) -> float:
         return self.mutator.mutateValue(e, delta, logFit) if np.random.random() <= self.mutation_probability else e
-
-    
-class GaussianMutator(Mutation):
-    name = ""
-
-    def __init__(self, sigma=1.) -> None:
-        self.sigma = sigma
-
-    def __str__(self) -> str:
-        return f"{self.name}, $\\sigma = {self.sigma:.2f}$"
-    
-    def gaussian (self):
-        return np.random.normal(0, self.sigma)
-    
-class GaussianAdditiveMutation(GaussianMutator):
-    name = "G+"
-
-    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
-        return e + self.gaussian()
-
-class GaussianAdditiveDeltaMutation(GaussianMutator):
-    name = "G+$\\Delta$"
-
-    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
-        return e + self.gaussian() * delta
-    
-class GaussianMultiplicativeMutation(GaussianMutator):
-    name = "G*"
-
-    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
-        return e * np.exp(self.gaussian())
-    
-
-class GaussianAdditiveDeltaLog10FitnessAnnealedMutation(GaussianMutator):
-    name = "G+$\\DeltaF$"
-
-    def mutateValue(self, e: float, delta: float, logFit: float) -> float:
-        return e + self.gaussian() * delta * logFit
     
 class SimulatedAnnealingMutation(Mutation):
     """We lower the chance of mutation as the simulation goes on"""
-    def __init__(self, mutator: Mutation, key: str, alpha = 1.) -> None:
+    def __init__(self, mutation: Mutation, key: str, alpha = 1.) -> None:
         super().__init__()
 
         self.key = key
         self.alpha = alpha
-        self.mutator = mutator
+        self.mutation = mutation
 
     def __str__(self) -> str:
-        return f"SA({ self.mutator }, ${self.key}={self.alpha:.3f}^t$)"
+        return f"SA({ self.mutation }, $\\{self.key} \\propto {self.alpha:.3f}^t$)"
     
     def mutate_population(self, population: list[RotTable], fitnesses: list[float]):
         mutated = super().mutate_population(population, fitnesses)
 
-        setattr(self.mutator, self.key, getattr(self.mutator, self.key) * self.alpha)
+        setattr(self.mutation, self.key, getattr(self.mutation, self.key) * self.alpha)
 
         return mutated
     
     def mutateValue(self, e: float, delta: float, logFit: float) -> float:
-        return self.mutator.mutateValue(e, delta, logFit)
+        return self.mutation.mutateValue(e, delta, logFit)
