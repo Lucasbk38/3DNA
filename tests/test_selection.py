@@ -42,7 +42,7 @@ class TestSelectionContract(unittest.TestCase):
                 self.assertLess(i, self.population_size)
 
     def test_best_individual_is_always_selected(self):
-        """Le meilleur individu est toujours sélectionné (contrat explicite)"""
+        """Le meilleur individu est toujours sélectionné"""
         best_index = max(range(self.population_size), key=lambda i: self.fitness[i])
 
         for selector in self.selectors:
@@ -121,7 +121,7 @@ class TestRouletteSelection(unittest.TestCase):
 
         count_target = 0
         count_worst = 0
-        repetitions = 300
+        repetitions = 100000
 
         for _ in range(repetitions):
             selected = selector.select(0.5, self.individus, self.fitness)
@@ -132,7 +132,7 @@ class TestRouletteSelection(unittest.TestCase):
 
         self.assertGreater(count_target, count_worst)
 
-class TestRouletteSelection(unittest.TestCase):
+class TestRankSelection(unittest.TestCase):
 
     def setUp(self):
         random.seed(0)
