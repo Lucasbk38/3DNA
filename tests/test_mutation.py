@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from dna.RotTable import RotTable, rotTableConfig
-from gen.mutation import GaussianAdditiveMutation, GaussianAdditiveDeltaMutation, GaussianMultiplicativeMutation, SimulatedAnnealingMutation, ThresholdMutation
+from gen.mutation import GaussianAdditiveMutation, GaussianAdditiveDeltaMutation, GaussianMultiplicativeMutation, SimulatedAnnealingMutation, ThresholdMutation, GaussianAdditiveDeltaLog10FitnessAnnealedMutation
 from dna.Traj3D import Traj3D
 from gen.fitness import Fitness
 
@@ -63,6 +63,18 @@ class TestMutations(unittest.TestCase):
     def test_mutations_GADM(self):
         """Teste que les mutations de type GaussianAdditiveDelta respectent les intervalles de valeurs"""
         mutated_individu = GaussianAdditiveDeltaMutation().mutate(self.individu, -1)
+        for k, dinuc in mutated_individu.rot_table.items():
+            for i, val in enumerate(dinuc):
+                if self.individu.rot_table[k][i] >= 2:
+                    self.assertEqual(val, self.individu.rot_table[k][i])
+                else:
+                    min_val = rotTableConfig[k][i] - rotTableConfig[k][3 + i]
+                    max_val = rotTableConfig[k][i] + rotTableConfig[k][3 + i]
+                    self.assertTrue(min_val <= val <= max_val)
+    
+    def test_mutations_GADLogM(self):
+        """Teste que les mutations de type GaussianAdditiveDeltaLog10FitnessAnnealed respectent les intervalles de valeurs"""
+        mutated_individu = GaussianAdditiveDeltaLog10FitnessAnnealedMutation().mutate(self.individu, -1)
         for k, dinuc in mutated_individu.rot_table.items():
             for i, val in enumerate(dinuc):
                 if self.individu.rot_table[k][i] >= 2:
