@@ -11,6 +11,7 @@ import numpy as np
 from dna.RotTable import defaultRotTable
 from json import dump as json_dump
 from json import load as json_load
+import os
 
 def genetic_algorithm(num_generations: int, generation_size: int, keepRate: float, duplicateRate: float, saltRate: float, seq_filename: str, selection: Selection, crossover: Crossover, mutation: Mutation, benchmark = False, visualisation = False, comparison = False):
     fitness = Fitness()
@@ -125,15 +126,11 @@ def benchmark(
     plt.ylabel("Evaluation du meilleur individu de la génération (échelle logarithmique)")
     plt.savefig('fig.png')
     plt.show()
-    if seq_filename == "data/plasmid_8k.fasta":
-        rotTableref = json_load(open('gen/best_rottable8k.json'))
-        if best_fitness > rotTableref["score"]:
-            with open("gen/best_rottable8k.json", 'w') as file:
-                best_rottable.rot_table["score"] = best_fitness
-                json_dump(best_rottable.rot_table, file, indent = 4)
-    if seq_filename == "data/plasmid_180k.fasta":
-        rotTableref = json_load(open('gen/best_rottable180k.json'))
-        if best_fitness > rotTableref["score"]:
-            with open("gen/best_rottable180k.json", 'w') as file:
-                best_rottable.rot_table["score"] = best_fitness
-                json_dump(best_rottable.rot_table, file, indent = 4)
+    dir = "gen"
+    with open(seq_filename, 'r', encoding='utf-8') as file:
+        seq = file.read()
+    nb_nucleotide = len(seq)
+    fichier = os.path.join(dir, f"{nb_nucleotide}nucleotide_{best_fitness}.json")
+    with open(fichier, 'w') as file:
+                best_rottable.rot_table["score"] = [best_fitness]
+                json_dump(best_rottable.rot_table,file,indent = 4)

@@ -42,7 +42,7 @@ class TestSelectionContract(unittest.TestCase):
                 self.assertLess(i, self.population_size)
 
     def test_best_individual_is_always_selected(self):
-        """Le meilleur individu est toujours sélectionné (contrat explicite)"""
+        """Le meilleur individu est toujours sélectionné"""
         best_index = max(range(self.population_size), key=lambda i: self.fitness[i])
 
         for selector in self.selectors:
@@ -54,7 +54,7 @@ class TestElitism(unittest.TestCase):
     def setUp(self):
         random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
-        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+        self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
     def test_elitism_selects_exact_best(self):
         """Teste si élitisme sélectionne les meilleurs"""
@@ -69,7 +69,7 @@ class TestTournamentSelection(unittest.TestCase):
     def setUp(self):
         random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
-        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+        self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
     def test_tournament_favors_best(self, k_best=2):
         """
@@ -106,7 +106,7 @@ class TestRouletteSelection(unittest.TestCase):
     def setUp(self):
         random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
-        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+        self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
     def test_roulette_favors_best(self, k_best=2):
         """Teste que le k ème individu a plus de chance d'être choisi que le pire"""
@@ -121,7 +121,7 @@ class TestRouletteSelection(unittest.TestCase):
 
         count_target = 0
         count_worst = 0
-        repetitions = 300
+        repetitions = 100000
 
         for _ in range(repetitions):
             selected = selector.select(0.5, self.individus, self.fitness)
@@ -132,12 +132,12 @@ class TestRouletteSelection(unittest.TestCase):
 
         self.assertGreater(count_target, count_worst)
 
-class TestRouletteSelection(unittest.TestCase):
+class TestRankSelection(unittest.TestCase):
 
     def setUp(self):
         random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
-        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+        self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
     def test_rank_favors_best(self, k_best=2):
         """Teste que le k ème individu a plus de chance d'être choisi que le pire"""
@@ -168,11 +168,11 @@ class TestTournamentWithHopeSelection(unittest.TestCase):
     def setUp(self):
         random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
-        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+        self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
     def test_tournament_with_hope_allows_worst(self):
         """Teste si le pire peut être choisi parfois"""
-        selector = TournamentWithHopeSelection(hopeProbability=0.5) # Probabilité élevé pour le test sinon ça va prendre 1000 ans
+        selector = TournamentWithHopeSelection(hopeProbability=0.5) # Probabilité élevé pour éviter de faire trop d'itérations
 
         worst = min(range(len(self.fitness)), key=lambda i: self.fitness[i])
 
