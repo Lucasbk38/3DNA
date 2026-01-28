@@ -83,23 +83,20 @@ class TestFitnessWeightedMeanCrossover(unittest.TestCase):
         random.seed(2)
         self.crossover = FitnessWeightedMeanCrossover()
         self.parents = [RotTable().random(), RotTable().random()]
-        self.fitness = [-10.0, -1.0]  # -1 est le meilleur
+        self.fitness = [-10, -1]  # -1 est le meilleur
 
     def test_best_fitness_parent_influences_more(self):
         """Le parent avec la fitness la plus proche de 0 doit influencer davantage"""
 
-        child = self.crossover.make_full_population(self.parents, 1, self.fitness)[0]
-        best_parent = self.parents[1]   # fitness -1
-        worst_parent = self.parents[0]  # fitness -10
+        parents = [self.parents[0], self.parents[1]]
+        child = self.crossover.make_full_population(parents, 1, fitness=self.fitness)[0]
+        best, worst = parents[1], parents[0]
 
-        for k in child.rot_table:
-            for i, v in enumerate(child.rot_table[k]):
-                self.assertGreaterEqual(abs(v - best_parent.rot_table[k][i]), abs(v - worst_parent.rot_table[k][i]))
-
+        self.assertTrue(all(abs(child.rot_table[k][i] - best.rot_table[k][i]) <= abs(child.rot_table[k][i] - worst.rot_table[k][i]) for k in child.rot_table for i in range(len(child.rot_table[k]))))
 
 
 class TestChooseBetweenParentsCrossover(unittest.TestCase):
-
+    
     def setUp(self):
         random.seed(3)
         self.crossover = ChooseBetweenParentsCrossover()
