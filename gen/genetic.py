@@ -11,6 +11,7 @@ import numpy as np
 from dna.RotTable import defaultRotTable
 from json import dump as json_dump
 from json import load as json_load
+import os
 
 def genetic_algorithm(num_generations: int, generation_size: int, keepRate: float, duplicateRate: float, seq_filename: str, selection: Selection, crossover: Crossover, mutation: Mutation, benchmark = False, visualisation = False, comparison = False):
     fitness = Fitness()
@@ -103,7 +104,7 @@ def benchmark(
     mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ],
     crossovers: list[Crossover] = [ MeanCrossover() ]
 ):
-    best_fitness = inf
+    best_fitness = -inf
     best_rottable = None
     
     for selection in selections:
@@ -111,22 +112,17 @@ def benchmark(
             for crossover in crossovers:
                 print(f"{str(selection)} and {str(mutation)}")
                 rottable, score = genetic_algorithm(num_generations, generation_size, keepRate, duplicateRate, seq_filename, selection, crossover, mutation, True, False)
-                if score < best_fitness:
+                if score > best_fitness:
                     best_rottable, best_fitness = rottable, score
     plt.legend(loc = 3, prop={ 'size': 6 })
     plt.xlabel("Génération n")
     plt.ylabel("Evaluation du meilleur individu de la génération (échelle logarithmique)")
     plt.savefig('fig.png')
     plt.show()
-    if seq_filename == "data/plasmid_8k.fasta":
-        rotTableref = json_load(open('gen/best_rottable8k.json'))
-        if best_fitness > rotTableref["score"]:
-            with open("gen/best_rottable8k.json", 'w') as file:
+    dir = "gen"
+    with open(seq_filename, 'r', encoding='utf-8') as file:
+        seq = file.read()
+    nb_nucleotide = len(seq)
+    fichier = os.path.join(dir, f"{nb_nucleotide}nucleotide_{best_fitness}.json")
+    with open(fichier, 'w') as file:
                 best_rottable.rot_table["score"] = best_fitness
-                json_dump(best_rottable.rot_table, file, indent = 4)
-    if seq_filename == "data/plasmid_180k.fasta":
-        rotTableref = json_load(open('gen/best_rottable180k.json'))
-        if best_fitness > rotTableref["score"]:
-            with open("gen/best_rottable180k.json", 'w') as file:
-                best_rottable.rot_table["score"] = best_fitness
-                json_dump(best_rottable.rot_table, file, indent = 4)
