@@ -77,7 +77,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, keepRate: floa
     
     if benchmark and not visualisation:
         print(f"last generation, best fitness: {best_fitness}")
-        plt.plot(range(num_generations), np.log10(-np.array(list_best_fitness)), label=f"Avg - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
+        plt.plot(range(num_generations), np.log10(-np.array(list_best_fitness)), label=f"Best Fitness - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
         plt.plot(range(num_generations), 10 * np.log10(-np.array(list_avg)), label=f"Avg - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
         plt.plot(range(num_generations), 10 * np.log10(np.array(list_std)), label=f"Std - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
         plt.plot(range(num_generations), 10 * np.log10(-np.array(list_medians)), label=f"Med - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
