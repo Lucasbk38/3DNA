@@ -18,7 +18,7 @@ class TestMutations(unittest.TestCase):
 
 
         self.base_mutator = GaussianAdditiveMutation(sigma=0.1)
-        self.sa_mutator = SimulatedAnnealingMutation(mutator=self.base_mutator, key="sigma", alpha=0.5)
+        self.sa_mutator = SimulatedAnnealingMutation(mutation=self.base_mutator, key="sigma", alpha=0.5)
 
     def test_values_above_threshold_are_not_mutated(self):
         """Conservation des valeurs supérieures ou égale à 2"""

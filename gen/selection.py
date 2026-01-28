@@ -12,7 +12,7 @@ class Selection(ABC):
     def __str__(self) -> str:
         pass
 
-class Elitism(Selection):
+class ElitismSelection(Selection):
     def __init__(self):
         super().__init__()
 
@@ -82,7 +82,7 @@ class RankSelection(Selection):
     
     # Sélection par rang
     def select(self, keepRate: float, individus: list[RotTable], fitness: list[float]):
-        selected: list[RotTable] = []
+        selected: list[int] = []
         size_of_selection = int(keepRate * len(individus)) - 1
 
         # Trier les indices des individus selon leur score (le pire en premier)
@@ -113,7 +113,7 @@ class TournamentWithHopeSelection(Selection):
         self.hopeProbability = hopeProbability
 
     def __str__(self) -> str:
-        return "TournamentHope"
+        return f"TwH($hp={self.hopeProbability}$)"
         
     # Sélection par tournoi
     def select(self, keepRate: float, individus: list[RotTable], fitness: list[float]) -> list[int]:
