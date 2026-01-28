@@ -49,7 +49,7 @@ class TestSelectionContract(unittest.TestCase):
             selected = selector.select(self.keep_rate, self.individus, self.fitness)
             self.assertIn(best_index, selected)
 
-class TestElitism(unittest.TestCase):
+class TestElitismSelection(unittest.TestCase):
 
     def setUp(self):
         random.seed(0)
