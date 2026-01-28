@@ -69,9 +69,12 @@ Le dossier 3DNA contient 3 dossier:
 ## Exécution du code
 
 Pour exécuter genetic.py ou main.py, il suffit de saisir `python -m gen` dans le terminal.
-Vous pouvez vous amuser en changeant le type de mutation, de sélection et de croisement
+Vous pouvez vous amuser en changeant le type de mutation, de sélection et de croisement.
+
 Assurez-vous d'avoir installer les modules nécessaires dans `requirements.txt`
 Le score du meilleur individu, la moyenne, la médiane et l'écart type seront donné pour chaque génération jusqu'à la dernière génération. Un graphique contenant les courbes s'affichera.
+
+
 
 Pour exécuter tous les tests, il suffit de saisir `converage run -m pytest`
 Pour voir le recouvrement d'un fichier, il suffit de saisir `python -m pytest tests/test_**nom_voulu**.py --cov=gen.**nom_voulu** --cov-report=term-missing`
