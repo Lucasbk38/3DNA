@@ -4,214 +4,191 @@ from gen.selection import Elitism, TournamentSelection, RouletteSelection, RankS
 from dna.RotTable import RotTable
 from dna.Traj3D import Traj3D
 from gen.fitness import Fitness
+import random 
 
-
-class TestSelection(unittest.TestCase):
-    """Test les 4 stratégies de SÉLECTION d'un algorithme génétique.
-    La sélection choisit les MEILLEURS individus pour les reproduire.
-    On teste que chaque sélection retourne la bonne moitié de la population."""
+class TestSelectionContract(unittest.TestCase):
 
     def setUp(self):
-        """Crée une population de test avec des fitness réelles."""
+        random.seed(42)
         np.random.seed(42)
-        
-        self.population_size = 10
-        
-        # Crée 10 individus différents
+
+        self.population_size = 20
+        self.keep_rate = 0.5
+
         self.individus = [RotTable.random() for _ in range(self.population_size)]
         self.traj = Traj3D()
-        self.fitness_evaluator = Fitness()
-        test_seq = "ATGCATGC"  # Séquence ADN test
-        
-        self.fitness = [self.fitness_evaluator.evaluate(ind, self.traj, test_seq) for ind in self.individus]
-        
-        # On sélectionne la moitié de la population
-        self.expected_size = self.population_size // 2
+        self.fitness_eval = Fitness()
+        self.seq = "ATGCATGC"
 
-    def test_elitism_selects_best_individuals(self):
-        """Test de l'élitisme"""
+        self.fitness = [self.fitness_eval.evaluate(ind, self.traj, self.seq) for ind in self.individus]
+
+        self.selectors = [Elitism(), TournamentSelection(), RouletteSelection(), RankSelection(), TournamentWithHopeSelection()]
+
+    def test_size_of_selection(self):
+        """La taille retournée doit respecter keepRate"""
+        expected = int(self.keep_rate * self.population_size)
+
+        for selector in self.selectors:
+            selected = selector.select(self.keep_rate, self.individus, self.fitness)
+            self.assertEqual(len(selected), expected)
+
+    def test_indices_are_valid(self):
+        """Les indices retournés doivent être valides"""
+        for selector in self.selectors:
+            selected = selector.select(self.keep_rate, self.individus, self.fitness)
+            for i in selected:
+                self.assertIsInstance(i, int)
+                self.assertGreaterEqual(i, 0)
+                self.assertLess(i, self.population_size)
+
+    def test_best_individual_is_always_selected(self):
+        """Le meilleur individu est toujours sélectionné (contrat explicite)"""
+        best_index = max(range(self.population_size), key=lambda i: self.fitness[i])
+
+        for selector in self.selectors:
+            selected = selector.select(self.keep_rate, self.individus, self.fitness)
+            self.assertIn(best_index, selected)
+
+class TestElitism(unittest.TestCase):
+
+    def setUp(self):
+        random.seed(0)
+        self.individus = [RotTable.random() for _ in range(10)]
+        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+
+    def test_elitism_selects_exact_best(self):
+        """Teste si élitisme sélectionne les meilleurs"""
         selector = Elitism()
-        selected = selector.select(1/2, self.individus, self.fitness)
-        
-        # Vérification 1: Taille correcte
-        self.assertEqual(len(selected), self.expected_size)
-        
-        # Vérification 2: Les meilleurs sont bien là
-        best_individuals = sorted(zip(self.individus, self.fitness), key=lambda x: x[1], reverse=True)[:self.expected_size]
-        best_set = {ind for ind, _ in best_individuals}
-        
-        self.assertEqual(set(selected), best_set, "L'élitisme doit retourner exactement les meilleurs")
+        selected = selector.select(0.5, self.individus, self.fitness)
 
-    def test_tournament_favors_best(self):
-        """Test du tournoi"""
+        expected = [9, 8, 7, 6, 5]
+        self.assertEqual(set(selected), set(expected))
+
+class TestTournamentSelection(unittest.TestCase):
+
+    def setUp(self):
+        random.seed(0)
+        self.individus = [RotTable.random() for _ in range(10)]
+        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+
+    def test_tournament_favors_best(self, k_best=2):
+        """
+        Teste si la sélection par tournoi favorise le k-ième meilleur individu
+        par rapport au pire.
+        
+        k_best=1 -> meilleur
+        k_best=2 -> deuxième meilleur
+        """
         selector = TournamentSelection()
-        selected = selector.select(1/2, self.individus, self.fitness)
-        
-        # Vérification 1: Taille correcte et individus valides
-        self.assertEqual(len(selected), self.expected_size)
-        for ind in selected:
-            self.assertIn(ind, self.individus)
-        
-        # Vérification 2: Le meilleur doit être sélectionné plus souvent
-        # indices triés du plus grand au plus petit
-        sorted_indices = np.argsort(self.fitness)[::-1]
 
-        # meilleur individu
-        best_individual = self.individus[sorted_indices[0]]
+        # Trier les indices par fitness décroissante
+        sorted_indices = sorted(range(len(self.fitness)), key=lambda i: self.fitness[i], reverse=True)
 
-        # deuxième meilleur
-        second_best_individual = self.individus[sorted_indices[1]]
+        # Identifier le k-ième meilleur et le pire
+        target = sorted_indices[k_best - 1]  # k_best=2 Le deuxième meilleur
+        worst = sorted_indices[-1]           # pire
 
-        # Le pire individu
-        worst_individual = self.individus[np.argmin(self.fitness)]
-        
-        count_best = 0
-        count_second_best = 0
+        count_target = 0
         count_worst = 0
-        repetitions = 100
-        
+        repetitions = 300
+
         for _ in range(repetitions):
-            selected = selector.select(1/2, self.individus, self.fitness)
-            if best_individual in selected:
-                count_best += 1
-            if worst_individual in selected:
+            selected = selector.select(0.5, self.individus, self.fitness)
+            if target in selected:
+                count_target += 1
+            if worst in selected:
                 count_worst += 1
-            if second_best_individual in selected:
-                count_second_best += 1
-        
-        # Le meilleur doit toujours être sélectionné.
-        # Les meilleurs ont plus de chances d'être sélectionnés
-        self.assertGreater(count_second_best, count_worst, f"Le meilleur doit être sélectionné plus souvent ({count_best} vs {count_worst})")
-        self.assertEqual(count_best, repetitions)
 
-    def test_roulette_probabilistic_selection(self):
-        """Test de la roulette"""
+        self.assertGreater(count_target, count_worst)
 
+class TestRouletteSelection(unittest.TestCase):
+
+    def setUp(self):
+        random.seed(0)
+        self.individus = [RotTable.random() for _ in range(10)]
+        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+
+    def test_roulette_favors_best(self, k_best=2):
+        """Teste que le k ème individu a plus de chance d'être choisi que le pire"""
         selector = RouletteSelection()
-        selected = selector.select(1/2, self.individus, self.fitness)
-        
-        # Vérification 1: Taille correcte et individus valides
-        self.assertEqual(len(selected), self.expected_size)
-        for ind in selected:
-            self.assertIn(ind, self.individus)
-        
-        # Vérification 2: Les meilleurs ont plus de chances
-       # indices triés du plus grand au plus petit
-        sorted_indices = np.argsort(self.fitness)[::-1]
 
-        # meilleur individu
-        best_individual = self.individus[sorted_indices[0]]
+        # Trier les indices par fitness décroissante
+        sorted_indices = sorted(range(len(self.fitness)), key=lambda i: self.fitness[i], reverse=True)
 
-        # deuxième meilleur
-        second_best_individual = self.individus[sorted_indices[1]]
+        # Identifier le k-ième meilleur et le pire
+        target = sorted_indices[k_best - 1]  # k_best=2 Le deuxième meilleur
+        worst = sorted_indices[-1]           # pire
 
-        # Le pire individu
-        worst_individual = self.individus[np.argmin(self.fitness)]
-        
-        count_best = 0
-        count_second_best = 0
+        count_target = 0
         count_worst = 0
-        repetitions = 100
-        
+        repetitions = 300
+
         for _ in range(repetitions):
-            selected = selector.select(1/2, self.individus, self.fitness)
-            if best_individual in selected:
-                count_best += 1
-            if worst_individual in selected:
+            selected = selector.select(0.5, self.individus, self.fitness)
+            if target in selected:
+                count_target += 1
+            if worst in selected:
                 count_worst += 1
-            if second_best_individual in selected:
-                count_second_best += 1
-        
-        # Le meilleur doit toujours être sélectionné.
-        # Les meilleurs ont plus de chances d'être sélectionnés
-        self.assertGreater(count_second_best, count_worst, f"Roulette: Le meilleur doit avoir plus de chances ({count_best} vs {count_worst})")
-        self.assertEqual(count_best, repetitions)
 
-    def test_rank_based_selection(self):
-        """Test du rang"""
+        self.assertGreater(count_target, count_worst)
 
+class TestRouletteSelection(unittest.TestCase):
+
+    def setUp(self):
+        random.seed(0)
+        self.individus = [RotTable.random() for _ in range(10)]
+        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+
+    def test_rank_favors_best(self, k_best=2):
+        """Teste que le k ème individu a plus de chance d'être choisi que le pire"""
         selector = RankSelection()
-        selected = selector.select(1/2, self.individus, self.fitness)
-        
-        # Vérification 1: Taille correcte et individus valides
-        self.assertEqual(len(selected), self.expected_size)
-        for ind in selected:
-            self.assertIn(ind, self.individus)
-        
-        # Vérification 2: Les meilleurs ont plus de chances
-        # indices triés du plus grand au plus petit
-        sorted_indices = np.argsort(self.fitness)[::-1]
 
-        # meilleur individu
-        best_individual = self.individus[sorted_indices[0]]
+        # Trier les indices par fitness décroissante
+        sorted_indices = sorted(range(len(self.fitness)), key=lambda i: self.fitness[i], reverse=True)
 
-        # deuxième meilleur
-        second_best_individual = self.individus[sorted_indices[1]]
-        
-        # Le pire individu
-        worst_individual = self.individus[np.argmin(self.fitness)]
-        
-        count_best = 0
-        count_second_best = 0
+        # Identifier le k-ième meilleur et le pire
+        target = sorted_indices[k_best - 1]  # k_best=2 Le deuxième meilleur
+        worst = sorted_indices[-1]           # pire
+
+        count_target = 0
         count_worst = 0
-        repetitions = 100
-        
+        repetitions = 300
+
         for _ in range(repetitions):
-            selected = selector.select(1/2, self.individus, self.fitness)
-            if best_individual in selected:
-                count_best += 1
-            if worst_individual in selected:
+            selected = selector.select(0.5, self.individus, self.fitness)
+            if target in selected:
+                count_target += 1
+            if worst in selected:
                 count_worst += 1
-            if second_best_individual in selected:
-                count_second_best += 1
-        
-        # Le meilleur doit toujours être sélectionné.
-        # Les meilleurs ont plus de chances d'être sélectionnés
-        self.assertGreater(count_second_best, count_worst, f"Rang: Le meilleur doit être sélectionné plus souvent ({count_best} vs {count_worst})")
-        self.assertEqual(count_best, repetitions)
 
-    def test_tournament_with_hope(self):
-        """Test du tournoi avec espoir"""
-        selector = TournamentWithHopeSelection()
-        selected = selector.select(1/2, self.individus, self.fitness)
-        
-        # Vérification 1: Taille correcte et individus valides
-        self.assertEqual(len(selected), self.expected_size)
-        for ind in selected:
-            self.assertIn(ind, self.individus)
-        
-        # Vérification 2: Le meilleur doit être sélectionné plus souvent
+        self.assertGreater(count_target, count_worst)
 
-        # indices triés du plus grand au plus petit
-        sorted_indices = np.argsort(self.fitness)[::-1]
+class TestTournamentWithHopeSelection(unittest.TestCase):
 
-        # meilleur individu
-        best_individual = self.individus[sorted_indices[0]]
+    def setUp(self):
+        random.seed(0)
+        self.individus = [RotTable.random() for _ in range(10)]
+        self.fitness = list(range(10))  # fitness (positive mais pas grave)
 
-        # deuxième meilleur
-        second_best_individual = self.individus[sorted_indices[1]]
+    def test_tournament_with_hope_allows_worst(self):
+        """Teste si le pire peut être choisi parfois"""
+        selector = TournamentWithHopeSelection(hopeProbability=0.5) # Probabilité élevé pour le test sinon ça va prendre 1000 ans
 
-        # Le pire individu
-        worst_individual = self.individus[np.argmin(self.fitness)]
-        
-        count_best = 0
-        count_second_best = 0
-        count_worst = 0
-        repetitions = 100
-        
-        for _ in range(repetitions):
-            selected = selector.select(1/2, self.individus, self.fitness)
-            if best_individual in selected:
-                count_best += 1
-            if worst_individual in selected:
-                count_worst += 1
-            if second_best_individual in selected:
-                count_second_best += 1
-        
-        # Le meilleur doit toujours être sélectionné.
-        # Les meilleurs ont plus de chances d'être sélectionnés
-        self.assertGreater(count_second_best, count_worst, f"Le meilleur doit être sélectionné plus souvent ({count_best} vs {count_worst})")
-        self.assertEqual(count_best, repetitions)
+        worst = min(range(len(self.fitness)), key=lambda i: self.fitness[i])
+
+        found = False
+        for _ in range(300):
+            selected = selector.select(0.5, self.individus, self.fitness)
+            if worst in selected:
+                found = True
+                break
+
+        self.assertTrue(found, "Le pire doit parfois être sélectionné avec l'espoir")
+
+
+
+
+
 
 
 

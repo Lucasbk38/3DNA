@@ -22,10 +22,10 @@ class Elitism(Selection):
     # Sélection par elimination des plus faibles
     def select(self, keepRate: float, individus: list[RotTable], fitness: list[float]) -> list[int]:
 
-        # Trier les individus par fitness décroissante
+        # Trier les indices des individus par fitness décroissante
         individus_sorted = sorted(range(len(individus)), key=lambda i: fitness[i], reverse=True)
         
-        # Garder la moitié des meilleurs
+        # Garder les indices correspondants aux meilleurs individus (le nombre de places est défini par le keepRate)
         return individus_sorted[:int(keepRate * len(individus))]
 
 class TournamentSelection(Selection):
@@ -41,10 +41,10 @@ class TournamentSelection(Selection):
         size_of_selection = int(keepRate * len(individus)) - 1
 
         for _ in range(size_of_selection):
-            # Choisir 2 individus au hasard
+            # Choisir l'indice de 2 individus au hasard
             p1 = random.randint(0, len(individus) - 1)
             p2 = random.randint(0, len(individus) - 1)
-            # Prendre le meilleur du tournoi
+            # Prendre l'indice de l'individu avec le meilleur score au tournoi
             if fitness[p1] > fitness[p2]:
                 selected.append(p1)
             else:
@@ -63,7 +63,12 @@ class RouletteSelection(Selection):
     # Sélection par roulette
     def select(self, keepRate: float, individus: list[RotTable], fitness: list[float]) -> list[int]:
         expFitness = np.exp(np.array(fitness) / 100)
+        
+        # Sélectionner les indices des individus par roulette avec un nombre de places défini par le keepRate
         indices = np.random.choice(len(individus), int(keepRate * len(individus)) - 1, p=expFitness / expFitness.sum())
+
+        # Conversion en int
+        indices = [int(i) for i in indices]
 
         return [max(range(len(individus)), key=lambda i: fitness[i])] + list(indices)
 
@@ -80,7 +85,7 @@ class RankSelection(Selection):
         selected: list[RotTable] = []
         size_of_selection = int(keepRate * len(individus)) - 1
 
-        # Trier les individus par fitness croissante (le pire en premier)
+        # Trier les indices des individus selon leur score (le pire en premier)
         individus_sorted = sorted(range(len(individus)), key=lambda i: fitness[i])
 
         # Attribuer un rang à chaque individu (1 = pire, N = meilleur)
@@ -90,16 +95,17 @@ class RankSelection(Selection):
         # Somme des rangs
         sum_of_ranks = sum(ranks)
 
+        # Sélectionner les indices des individus par roulette basée sur les rangs (nombre de places défini par le keepRate)
         for _ in range(size_of_selection):
             r = random.uniform(0, sum_of_ranks)
             cumul = 0
             for ind, rank in zip(individus_sorted, ranks):
                 cumul += rank
                 if cumul >= r:
-                    selected.append(individus[ind])
+                    selected.append(ind)
                     break
 
-        return [individus[max(range(len(individus)), key=lambda i: fitness[i])]] + selected
+        return [max(range(len(individus)), key=lambda i: fitness[i])] + selected
     
 class TournamentWithHopeSelection(Selection):
     def __init__(self, hopeProbability = 0.001):
@@ -115,10 +121,10 @@ class TournamentWithHopeSelection(Selection):
         size_of_selection = int(keepRate * len(individus)) - 1
 
         for _ in range(size_of_selection):
-            # Choisir 2 individus au hasard
+            # Choisir les indices de 2 individus au hasard
             p1 = random.randint(0, len(individus) - 1)
             p2 = random.randint(0, len(individus) - 1)
-            # Prendre le meilleur du tournoi mais le pire a une chance
+            # Prendre l'indice du meilleur du tournoi mais le pire peut avoir une chance
             p = random.uniform(0, 1)
             if p < self.hopeProbability:
                 if fitness[p1] > fitness[p2]:
