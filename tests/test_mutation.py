@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from dna.RotTable import RotTable, rotTableConfig
-from gen.mutation import GaussianAdditiveMutation, GaussianAdditiveDeltaMutation, GaussianMultiplicativeMutation, SimulatedAnnealingMutation, ThresholdMutator
+from gen.mutation import GaussianAdditiveMutation, GaussianAdditiveDeltaMutation, GaussianMultiplicativeMutation, SimulatedAnnealingMutation, ThresholdMutation
 from dna.Traj3D import Traj3D
 from gen.fitness import Fitness
 
@@ -105,7 +105,7 @@ class TestMutations(unittest.TestCase):
     def test_threshold_mutator_zero_probability(self):
         """Teste que l'individu ne change pas"""
         base = GaussianAdditiveMutation(sigma=10.0)
-        threshold = ThresholdMutator(base, mutation_probability=0.0)
+        threshold = ThresholdMutation(base, mutation_probability=0.0)
 
         mutated = threshold.mutate(self.individu, fitness=-1.0)
 
@@ -115,7 +115,7 @@ class TestMutations(unittest.TestCase):
         """Teste que l'individu mute toujours"""
         np.random.seed(0)
         base = GaussianAdditiveMutation(sigma=1.0)
-        threshold = ThresholdMutator(base, mutation_probability=1.0)
+        threshold = ThresholdMutation(base, mutation_probability=1.0)
 
         mutated = threshold.mutate(self.individu, fitness=-1.0)
 

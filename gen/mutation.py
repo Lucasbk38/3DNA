@@ -35,7 +35,7 @@ class Mutation(ABC):
         return [self.mutate(individu, fitness) for individu, fitness in zip(population, fitnesses)]
     
 
-class ThresholdMutator(Mutation):
+class ThresholdMutation(Mutation):
     def __init__(self, mutator: Mutation, mutation_probability = 0.1) -> None:
         super().__init__()
 

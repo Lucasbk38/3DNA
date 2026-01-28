@@ -1,6 +1,6 @@
 from gen.fitness import Fitness
 from gen.crossover import Crossover, MeanCrossover, FitnessWeightedMeanCrossover
-from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation, ThresholdMutator, GaussianAdditiveDeltaLog10FitnessAnnealedMutation
+from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation, ThresholdMutation, GaussianAdditiveDeltaLog10FitnessAnnealedMutation
 from gen.selection import RouletteSelection, RankSelection, TournamentSelection, Elitism, Selection, TournamentWithHopeSelection
 from math import inf
 import statistics
@@ -77,9 +77,9 @@ def genetic_algorithm(num_generations: int, generation_size: int, keepRate: floa
     if benchmark and not visualisation:
         print(f"last generation, best fitness: {best_fitness}")
         plt.plot(range(num_generations), np.log10(-np.array(list_best_fitness)), label=f"Avg - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
-        plt.plot(range(num_generations), np.log10(-np.array(list_avg)), label=f"Avg - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
-        plt.plot(range(num_generations), np.log10(np.array(list_std)), label=f"Std - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
-        plt.plot(range(num_generations), np.log10(-np.array(list_medians)), label=f"Med - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
+        plt.plot(range(num_generations), 10 * np.log10(-np.array(list_avg)), label=f"Avg - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
+        plt.plot(range(num_generations), 10 * np.log10(np.array(list_std)), label=f"Std - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
+        plt.plot(range(num_generations), 10 * np.log10(-np.array(list_medians)), label=f"Med - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
 
     if visualisation:
         traj3d.compute(seq,currentGeneration[best_individual_index],True)
@@ -105,6 +105,7 @@ def benchmark(
 ):
     best_fitness = inf
     best_rottable = None
+    
     for selection in selections:
         for mutation in mutations:
             for crossover in crossovers:
@@ -129,14 +130,3 @@ def benchmark(
             with open("gen/best_rottable180k.json", 'w') as file:
                 best_rottable.rot_table["score"] = best_fitness
                 json_dump(best_rottable.rot_table, file, indent = 4)
-
-
-def benchmark_sigma_tuning(num_generations: int, generation_size: int, seq_filename: str):
-    for random_var in np.linspace(-0.4,-0.2,10):
-        sigma = 10**random_var
-        mutation = GaussianAdditiveDeltaMutation(sigma)
-        selection = Roulette()
-        crossover = MeanCrossover()
-        genetic_algorithm(num_generations,generation_size,seq_filename, selection, crossover, mutation, True)
-    plt.legend(loc = 1)
-    plt.show()

@@ -83,7 +83,7 @@ class TestFitnessWeightedMeanCrossover(unittest.TestCase):
         random.seed(2)
         self.crossover = FitnessWeightedMeanCrossover()
         self.parents = [RotTable().random(), RotTable().random()]
-        self.fitness = [-10, -1]  # -1 est le meilleur
+        self.fitness = [-10., -1.]  # -1 est le meilleur
 
     def test_best_fitness_parent_influences_more(self):
         """Le parent avec la fitness la plus proche de 0 doit influencer davantage"""
