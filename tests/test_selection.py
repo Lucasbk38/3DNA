@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from gen.selection import Elitism, TournamentSelection, RouletteSelection, RankSelection, TournamentWithHopeSelection
+from gen.selection import ElitismSelection, TournamentSelection, RouletteSelection, RankSelection, TournamentWithHopeSelection
 from dna.RotTable import RotTable
 from dna.Traj3D import Traj3D
 from gen.fitness import Fitness
@@ -22,7 +22,7 @@ class TestSelectionContract(unittest.TestCase):
 
         self.fitness = [self.fitness_eval.evaluate(ind, self.traj, self.seq) for ind in self.individus]
 
-        self.selectors = [Elitism(), TournamentSelection(), RouletteSelection(), RankSelection(), TournamentWithHopeSelection()]
+        self.selectors = [ElitismSelection(), TournamentSelection(), RouletteSelection(), RankSelection(), TournamentWithHopeSelection()]
 
     def test_size_of_selection(self):
         """La taille retournée doit respecter keepRate"""
@@ -58,7 +58,7 @@ class TestElitism(unittest.TestCase):
 
     def test_elitism_selects_exact_best(self):
         """Teste si élitisme sélectionne les meilleurs"""
-        selector = Elitism()
+        selector = ElitismSelection()
         selected = selector.select(0.5, self.individus, self.fitness)
 
         expected = [9, 8, 7, 6, 5]

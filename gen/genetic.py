@@ -1,7 +1,7 @@
 from gen.fitness import Fitness
 from gen.crossover import Crossover, MeanCrossover, FitnessWeightedMeanCrossover
 from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation, ThresholdMutation, GaussianAdditiveDeltaLog10FitnessAnnealedMutation
-from gen.selection import RouletteSelection, RankSelection, TournamentSelection, Elitism, Selection, TournamentWithHopeSelection
+from gen.selection import RouletteSelection, RankSelection, TournamentSelection, ElitismSelection, Selection, TournamentWithHopeSelection
 from math import inf
 import statistics
 from dna.Traj3D import Traj3D
@@ -98,7 +98,7 @@ def benchmark(
     duplicateRate: float,
     saltRate: float,
     seq_filename: str,
-    selections: list[Selection] = [ Elitism(), RouletteSelection(), RankSelection(), TournamentSelection() ],
+    selections: list[Selection] = [ ElitismSelection(), RouletteSelection(), RankSelection(), TournamentSelection() ],
     mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ],
     crossovers: list[Crossover] = [ MeanCrossover() ],
     round = 1

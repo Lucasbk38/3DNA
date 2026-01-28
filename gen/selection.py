@@ -12,7 +12,7 @@ class Selection(ABC):
     def __str__(self) -> str:
         pass
 
-class Elitism(Selection):
+class ElitismSelection(Selection):
     def __init__(self):
         super().__init__()
 
