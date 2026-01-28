@@ -172,7 +172,7 @@ class TestTournamentWithHopeSelection(unittest.TestCase):
 
     def test_tournament_with_hope_allows_worst(self):
         """Teste si le pire peut être choisi parfois"""
-        selector = TournamentWithHopeSelection(hopeProbability=0.5) # Probabilité élevé pour le test sinon ça va prendre 1000 ans
+        selector = TournamentWithHopeSelection(hopeProbability=0.5) # Probabilité élevé pour éviter de faire trop d'itérations
 
         worst = min(range(len(self.fitness)), key=lambda i: self.fitness[i])
 
