@@ -69,7 +69,7 @@ Le dossier 3DNA contient 3 dossier:
 ## Exécution du code
 
 Pour exécuter genetic.py ou main.py, il suffit de saisir `python -m gen` dans le terminal.
-Les paramètres dans l'ordre sont le nombre de génération, la taille de la population, le pourcentage d'individus gardés, le taux de dupplication et le type de sélection, de mutation avec la probabilité de mutation et le facteur de diminution de l'écart-type, et le type de croisement.
+Les paramètres dans l'ordre sont le nombre de génération, la taille de la population, le pourcentage d'individus gardés, le taux de dupplication, le plasmide, le type de sélection, de mutation avec la probabilité de mutation et le facteur de diminution de l'écart-type, et le type de croisement.
 Vous pouvez vous amuser en changeant les arguments dans `main.py` 
 
 Assurez-vous d'avoir installer les modules nécessaires dans `requirements.txt`
