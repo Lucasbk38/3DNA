@@ -105,7 +105,7 @@ def benchmark(
     crossovers: list[Crossover] = [ MeanCrossover() ]
 ):
     best_fitness = -inf
-    best_rottable = None
+    best_rottable = RotTable()
     
     for selection in selections:
         for mutation in mutations:
@@ -125,5 +125,5 @@ def benchmark(
     nb_nucleotide = len(seq)
     fichier = os.path.join(dir, f"{nb_nucleotide}nucleotide_{best_fitness}.json")
     with open(fichier, 'w') as file:
-                best_rottable.rot_table["score"] = best_fitness
+                best_rottable.rot_table["score"] = [best_fitness]
                 json_dump(best_rottable.rot_table,file,indent = 4)
