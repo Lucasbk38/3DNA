@@ -54,7 +54,7 @@ class TestElitism(unittest.TestCase):
     def setUp(self):
         random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
-        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+        self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
     def test_elitism_selects_exact_best(self):
         """Teste si élitisme sélectionne les meilleurs"""
@@ -69,7 +69,7 @@ class TestTournamentSelection(unittest.TestCase):
     def setUp(self):
         random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
-        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+        self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
     def test_tournament_favors_best(self, k_best=2):
         """
@@ -106,7 +106,7 @@ class TestRouletteSelection(unittest.TestCase):
     def setUp(self):
         random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
-        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+        self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
     def test_roulette_favors_best(self, k_best=2):
         """Teste que le k ème individu a plus de chance d'être choisi que le pire"""
@@ -137,7 +137,7 @@ class TestRankSelection(unittest.TestCase):
     def setUp(self):
         random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
-        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+        self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
     def test_rank_favors_best(self, k_best=2):
         """Teste que le k ème individu a plus de chance d'être choisi que le pire"""
@@ -168,7 +168,7 @@ class TestTournamentWithHopeSelection(unittest.TestCase):
     def setUp(self):
         random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
-        self.fitness = list(range(10))  # fitness (positive mais pas grave)
+        self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
     def test_tournament_with_hope_allows_worst(self):
         """Teste si le pire peut être choisi parfois"""

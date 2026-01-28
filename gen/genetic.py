@@ -105,7 +105,7 @@ def benchmark(
     crossovers: list[Crossover] = [ MeanCrossover() ]
 ):
     best_fitness = -inf
-    best_rottable = None
+    best_rottable: RotTable = RotTable()
     
     for selection in selections:
         for mutation in mutations:
