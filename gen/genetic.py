@@ -112,11 +112,12 @@ def benchmark(
     for selection in selections:
         for mutation in mutations:
             for crossover in crossovers:
-                print(f"{selection}, {crossover} and {mutation}, round {round}")
+                print(f"{selection}, {crossover} and {mutation}")
 
                 list_best_fitness_log_avg = np.array([0] * num_generations)
 
-                for _ in range(round):
+                for r in range(round):
+                    print(f"round {r + 1}")
                     rottable, score, list_best_fitness = genetic_algorithm(num_generations, generation_size, keepRate, duplicateRate, saltRate, seq_filename, selection, crossover, mutation, init_gen, True, False)
                     list_best_fitness_log_avg = list_best_fitness_log_avg + np.log(-np.array(list_best_fitness))
                     if score > best_fitness:
