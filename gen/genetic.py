@@ -76,6 +76,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, keepRate: floa
             best_fitness = f
             best_individual_index = i
 
+    #Remove comments here if you want to plot the average, std or median of the fitness of the generation
     # plt.plot(range(num_generations), -5 * np.log10(-np.array(list_avg)), label=f"Avg - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
     # plt.plot(range(num_generations), -5 * np.log10(np.array(list_std)), label=f"Std - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
     # plt.plot(range(num_generations), -5 * np.log10(-np.array(list_medians)), label=f"Med - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
@@ -111,7 +112,7 @@ def benchmark(
     for selection in selections:
         for mutation in mutations:
             for crossover in crossovers:
-                print(f"{selection}, {crossover} and {mutation}")
+                print(f"{selection}, {crossover} and {mutation}, round {round}")
 
                 list_best_fitness_log_avg = np.array([0] * num_generations)
 
