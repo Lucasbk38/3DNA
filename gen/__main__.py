@@ -16,5 +16,5 @@ benchmark(
     [ FitnessNorm2AvgLast2() ]
 )
 
-#any_rottable_result('rotTableExamples/3-12.json', 'data/plasmid_8k.fasta')
-#any_rottable_result('rotTableExamples/182824nucleotide_-5.264791933376954e-10.json','data/plasmid_180k.fasta')
+#any_rottable_result('gen/rotTableExamples/3-12.json', 'data/plasmid_8k.fasta')
+#any_rottable_result('gen/rotTableExamples/182824nucleotide_-5.264791933376954e-10.json','data/plasmid_180k.fasta')

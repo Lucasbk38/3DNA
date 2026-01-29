@@ -130,7 +130,7 @@ def benchmark(
     plt.ylabel("Evaluation du meilleur individu de la génération (échelle logarithmique)")
     plt.savefig('fig.png')
     plt.show()
-    dir = "gen"
+    dir = "gen/rotTableExamples"
     with open(seq_filename, 'r', encoding='utf-8') as file:
         seq = file.read()
     nb_nucleotide = len(seq)
