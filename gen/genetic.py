@@ -1,5 +1,5 @@
 from gen.fitness import Fitness
-from gen.crossover import Crossover, MeanCrossover, FitnessWeightedMeanCrossover
+from gen.crossover import Crossover, MeanCrossover, FitnessWeightedMeanCrossover, ChooseBetweenParentsCrossover
 from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation, ThresholdMutation, GaussianAdditiveDeltaLog10FitnessAnnealedMutation
 from gen.selection import RouletteSelection, RankSelection, TournamentSelection, ElitismSelection, Selection, TournamentWithHopeSelection
 from math import inf
@@ -76,6 +76,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, keepRate: floa
             best_fitness = f
             best_individual_index = i
 
+    #Remove comments here if you want to plot the average, std or median of the fitness of the generation
     # plt.plot(range(num_generations), -5 * np.log10(-np.array(list_avg)), label=f"Avg - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
     # plt.plot(range(num_generations), -5 * np.log10(np.array(list_std)), label=f"Std - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
     # plt.plot(range(num_generations), -5 * np.log10(-np.array(list_medians)), label=f"Med - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
@@ -115,7 +116,8 @@ def benchmark(
 
                 list_best_fitness_log_avg = np.array([0] * num_generations)
 
-                for _ in range(round):
+                for r in range(round):
+                    print(f"round {r + 1}")
                     rottable, score, list_best_fitness = genetic_algorithm(num_generations, generation_size, keepRate, duplicateRate, saltRate, seq_filename, selection, crossover, mutation, init_gen, True, False)
                     list_best_fitness_log_avg = list_best_fitness_log_avg + np.log(-np.array(list_best_fitness))
                     if score > best_fitness:
