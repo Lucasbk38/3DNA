@@ -1,6 +1,7 @@
 #For drawing
 import numpy as np
 from numpy.typing import NDArray
+from typing import Generator
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from dna.RotTable import RotTable
@@ -27,7 +28,7 @@ class Traj3D:
     def getTraj(self) -> list:
         return self.__Traj3D
 
-    def compute(self, dna_seq: str, rot_table: RotTable, saveTraj=False) -> NDArray[np.float64]:
+    def compute(self, dna_seq: str, rot_table: RotTable, values=[-1], saveTraj=False) -> Generator[NDArray[np.float64]]:
 
         # Matrice cumulant l'ensemble des transformations géométriques engendrées par la séquence d'ADN
         total_matrix = np.eye(4)  # Identity matrix
@@ -39,10 +40,12 @@ class Traj3D:
         matrices_Q: dict[str, NDArray[np.float64]] = {}
         dinucleotideMatrices: dict[str, NDArray[np.float64]] = {}
 
+        values = set(e % (len(dna_seq) - 1) for e in values)
+
         # On parcourt la sequence, nucléotide par nucléotide
-        for i in range(1, len(dna_seq)):
+        for i in range(len(dna_seq) - 1):
             # On lit le dinucleotide courant
-            dinucleotide = dna_seq[i-1] + dna_seq[i]
+            dinucleotide = dna_seq[i] + dna_seq[i+1]
             # On remplit au fur et à mesure les matrices de rotation
             if dinucleotide not in matrices_Rz:
                 matrices_Rz[dinucleotide], matrices_Q[dinucleotide] = \
@@ -60,13 +63,14 @@ class Traj3D:
             # et on les ajoute à la matrice totale
             total_matrix = total_matrix @ dinucleotideMatrices[dinucleotide]
 
+            if i in values:
+                yield (total_matrix @ self.__Traj3D[0]).T[:3]
+
             # On calcule la position du nucléotide courant
             # en appliquant toutes les transformations géométriques
             # à la position du premier nucléotide
             if saveTraj:
                 self.__Traj3D.append(total_matrix @ self.__Traj3D[0])
-                
-        return (total_matrix @ self.__Traj3D[0]).T[:3]
 
     def __compute_matrices(self, rot_table: RotTable, dinucleotide: str):
 

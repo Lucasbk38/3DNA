@@ -2,8 +2,6 @@ import unittest
 import numpy as np
 from dna.RotTable import RotTable, rotTableConfig
 from gen.mutation import GaussianAdditiveMutation, GaussianAdditiveDeltaMutation, GaussianMultiplicativeMutation, SimulatedAnnealingMutation, ThresholdMutation, GaussianAdditiveDeltaLog10FitnessAnnealedMutation
-from dna.Traj3D import Traj3D
-from gen.fitness import Fitness
 
 class TestMutations(unittest.TestCase):
     def setUp(self):

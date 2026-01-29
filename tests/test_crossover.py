@@ -4,7 +4,7 @@ import random
 from gen.crossover import MeanCrossover, FitnessWeightedMeanCrossover, ChooseBetweenParentsCrossover
 
 from dna.RotTable import RotTable
-from gen.fitness import Fitness
+from gen.fitness import FitnessNorm2Last
 from dna.Traj3D import Traj3D
 
 
@@ -21,7 +21,7 @@ class TestCrossoverBase(unittest.TestCase):
 
         self.population = [RotTable().random() for _ in range(self.POP_SIZE)]
         self.traj = Traj3D()
-        self.fitness_eval = Fitness()
+        self.fitness_eval = FitnessNorm2Last()
         self.seq = "ATGCATGC"
 
         self.fitness = [self.fitness_eval.evaluate(ind, self.traj, self.seq) for ind in self.population]

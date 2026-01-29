@@ -1,4 +1,4 @@
-from gen.fitness import Fitness
+from gen.fitness import Fitness, FitnessNorm2Last, FitnessNorm2AvgLast2
 from gen.crossover import Crossover, MeanCrossover, FitnessWeightedMeanCrossover
 from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation, ThresholdMutation, GaussianAdditiveDeltaLog10FitnessAnnealedMutation
 from gen.selection import RouletteSelection, RankSelection, TournamentSelection, ElitismSelection, Selection, TournamentWithHopeSelection
@@ -14,8 +14,7 @@ from json import dump as json_dump
 from json import load as json_load
 import os
 
-def genetic_algorithm(num_generations: int, generation_size: int, keepRate: float, duplicateRate: float, saltRate: float, seq_filename: str, selection: Selection, crossover: Crossover, mutation: Mutation, init_gen = RotTable.random, benchmark = False, visualisation = False, comparison = False):
-    fitness = Fitness()
+def genetic_algorithm(num_generations: int, generation_size: int, keepRate: float, duplicateRate: float, saltRate: float, seq_filename: str, selection: Selection, crossover: Crossover, mutation: Mutation, fitness: Fitness, init_gen = RotTable.random, benchmark = False, visualisation = False, comparison = False):
     traj3d = Traj3D(visualisation)
 
     #Taken from dna.__main__
@@ -84,9 +83,8 @@ def genetic_algorithm(num_generations: int, generation_size: int, keepRate: floa
         traj3d.compute(seq,currentGeneration[best_individual_index],True)
         traj3d.draw()
     if comparison:
-        fit = Fitness()
         traj = Traj3D(True)
-        print(f"Before modifying the rotation table the last point had a norm of : {fit.evaluate(RotTable(defaultRotTable),traj,seq)}")
+        print(f"Before modifying the rotation table the last point had a norm of : {fitness.evaluate(RotTable(defaultRotTable),traj,seq)}")
         traj.compute(seq,RotTable(defaultRotTable),True)
         traj.draw()
     
@@ -102,6 +100,7 @@ def benchmark(
     selections: list[Selection] = [ ElitismSelection(), RouletteSelection(), RankSelection(), TournamentSelection() ],
     mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ],
     crossovers: list[Crossover] = [ MeanCrossover() ],
+    fitnesses: list[Fitness] = [ FitnessNorm2Last() ],
     init_gen=RotTable.random,
     round = 1
 ):
@@ -111,17 +110,18 @@ def benchmark(
     for selection in selections:
         for mutation in mutations:
             for crossover in crossovers:
-                print(f"{selection}, {crossover} and {mutation}")
+                for fitness in fitnesses:
+                    print(f"{selection}, {crossover} and {mutation}")
 
-                list_best_fitness_log_avg = np.array([0] * num_generations)
+                    list_best_fitness_log_avg = np.array([0] * num_generations)
 
-                for _ in range(round):
-                    rottable, score, list_best_fitness = genetic_algorithm(num_generations, generation_size, keepRate, duplicateRate, saltRate, seq_filename, selection, crossover, mutation, init_gen, True, False)
-                    list_best_fitness_log_avg = list_best_fitness_log_avg + np.log(-np.array(list_best_fitness))
-                    if score > best_fitness:
-                        best_rottable, best_fitness = rottable, score
+                    for _ in range(round):
+                        rottable, score, list_best_fitness = genetic_algorithm(num_generations, generation_size, keepRate, duplicateRate, saltRate, seq_filename, selection, crossover, mutation, fitness, init_gen, True, False)
+                        list_best_fitness_log_avg = list_best_fitness_log_avg + np.log(-np.array(list_best_fitness))
+                        if score > best_fitness:
+                            best_rottable, best_fitness = rottable, score
 
-                plt.plot(range(num_generations), list_best_fitness_log_avg / round, label=f"Avg log best - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
+                    plt.plot(range(num_generations), list_best_fitness_log_avg / round, label=f"Avg log best - Sélection: {selection}; Mutation: {mutation}; Crossover: {crossover}")
                     
     plt.legend(loc = 3, prop={ 'size': 6 })
     plt.xlabel("Génération n")

@@ -3,7 +3,7 @@ import numpy as np
 from gen.selection import ElitismSelection, TournamentSelection, RouletteSelection, RankSelection, TournamentWithHopeSelection
 from dna.RotTable import RotTable
 from dna.Traj3D import Traj3D
-from gen.fitness import Fitness
+from gen.fitness import FitnessNorm2Last
 import random 
 
 class TestSelectionContract(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestSelectionContract(unittest.TestCase):
 
         self.individus = [RotTable.random() for _ in range(self.population_size)]
         self.traj = Traj3D()
-        self.fitness_eval = Fitness()
+        self.fitness_eval = FitnessNorm2Last()
         self.seq = "ATGCATGC"
 
         self.fitness = [self.fitness_eval.evaluate(ind, self.traj, self.seq) for ind in self.individus]
