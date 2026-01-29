@@ -28,7 +28,7 @@ Ces algorithmes sont implementés en Python et structurés en classes (programma
 
 On utilise un algorithme génétique classique qui suit ces étapes:
 - **Initialisation** : On part d'une génération 0 de N individus générés aléatoirement.  
-- **Évaluation** : On évalue chaque individu avec la fonction d'évaluation que l'on cherche à minimiser.  
+- **Évaluation** : On évalue chaque individu avec la fonction d'évaluation que l'on cherche à minimiser ou maximiser.  
 - **Sélection** : On sélectionne, en introduisant ou non de l'aléatoire, une partie de nos individus selon certaines règles qui dépendent de leur évaluation.  
 - **Reproduction** : On choisit deux parents parmi les individus sélectionnés et on construit un enfant avec les règles de construction qu'on a définies.  
 - **Mutation** : On tire au sort certains individus (parfois uniquement les enfants) que l'on modifie légèrement.
@@ -39,15 +39,15 @@ On réitère les étapes autant de fois que l'on veut de générations. Une clas
 ## Modélisation du problème
 
 - Un **individu** est une table de rotation.
-- Une **mutation** est un changement de la matrice de rotation d'une séquence de 2 nucléotides dans la table de rotation.
+- Une **mutation** est un changement de matrices de rotation dans la table de rotation représentant un individu.
 - Un enfant (une table de rotation) est créé à partir des valeurs de ses parents (deux tables de rotation).
 - Dans notre problème, on cherche à minimiser la distance entre le premier point de la trajectoire, qui est toujours $(0, 0, 0)$, et le dernier point. On utilise donc comme fonction d’évaluation la norme euclidienne du dernier point. Dans le code, on prend son opposé pour passer à un problème de maximisation.
-- Un individu est sélectionné en fonction de son score, ie l'efficacité de la table de rotation à minimiser la distance entre le premier et le dernier nucléotide de la séquence.
+- Un individu est sélectionné en fonction de son évaluation qui représente donc l'efficacité de la table de rotation à minimiser la distance entre le premier et le dernier nucléotide de la séquence.
 
 
 ## Présentation du Dossier
 
-Le dossier 3DNA contient 3 dossier:
+Le dossier 3DNA contient 3 dossiers:
 
 
 - le dossier **dna** contient:
@@ -71,9 +71,9 @@ Le dossier 3DNA contient 3 dossier:
 ## Exécution du code
 
 Pour exécuter genetic.py ou main.py, il suffit de saisir 
-> python -m gen 
+> py -m gen 
 
-dans le terminal (ou py, ou py3).
+dans le terminal (ou python3, ou python).
 
 Les paramètres dans l'ordre sont le nombre de générations, la taille de la population, le pourcentage d'individus gardés, le taux de duplication, le taux de migration, le nom du fichier dans lequel est écrit le plasmide, le type de sélection, de mutation avec la probabilité de mutation et le facteur de diminution de l'écart-type, et le type de reproduction.
 Vous pouvez vous amuser en changeant les arguments dans `main.py` 
