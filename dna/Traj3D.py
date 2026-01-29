@@ -118,8 +118,11 @@ class Traj3D:
     def draw(self):
         xyz = np.array(self.__Traj3D)
         print(xyz)
-        x, y, z = xyz[:,0], xyz[:,1], xyz[:,2]
-        self.ax.plot(x,y,z)
+        xs, ys, zs = xyz[:,0], xyz[:,1], xyz[:,2]
+        self.ax.plot(xs,ys,zs)
+        
+        for i in [0, 1, -2, -1]:
+            self.ax.scatter(xs[i], ys[i], zs[i], c=["green", "cyan", "orange", "red"][i])
         plt.show()
 
     def save_fig(self, filename: str):

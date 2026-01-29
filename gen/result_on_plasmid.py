@@ -2,13 +2,14 @@ from json import load as json_load
 from dna.Traj3D import *
 from gen.fitness import *
 
-def any_rottable_result(rottable_filename : str,seq_filename: str):
-    rottable = json_load(open(rottable_filename))
+def any_rottable_result(rottable_filename: str, seq_filename: str):
+    rottable = RotTable(json_load(open(rottable_filename)))
     fit = FitnessNorm2Last()
     traj = Traj3D(True)
     lineList = [line.rstrip('\n') for line in open(seq_filename)]
     seq = ''.join(lineList[1:])
-    print(fit.evaluate(RotTable(rottable),traj,seq))
+    print(fit.evaluate(rottable,traj,seq))
+    for _ in traj.compute(seq, rottable, [], True): pass
     traj.draw()
 
 def best_rottable_8k():
