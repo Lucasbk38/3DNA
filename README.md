@@ -83,7 +83,7 @@ Le score du meilleur individu, la moyenne, la médiane et l'écart type seront d
 
 
 
-Pour exécuter tous les tests, il suffit de saisir `converage run -m pytest`
+Pour exécuter tous les tests, il suffit de saisir `coverage run -m pytest`
 Pour voir le recouvrement d'un fichier, il suffit de saisir `python -m pytest tests/test_**nom_voulu**.py --cov=gen.**nom_voulu** --cov-report=term-missing`
 Assurez-vous d'avoir installer le module `pytest` et `pytest-cov`
 
