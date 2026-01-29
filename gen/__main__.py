@@ -27,5 +27,5 @@ benchmark(
     round=3
 )
 
-#any_rottable_result('gen/3-12.json', 'data/plasmid_8k.fasta')
-#any_rottable_result('gen/182824nucleotide_-5.264791933376954e-10.json','data/plasmid_180k.fasta')
+#any_rottable_result('rotTableExamples/3-12.json', 'data/plasmid_8k.fasta')
+#any_rottable_result('rotTableExamples/182824nucleotide_-5.264791933376954e-10.json','data/plasmid_180k.fasta')
