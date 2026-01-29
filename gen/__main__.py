@@ -7,7 +7,7 @@ from gen.result_on_plasmid import any_rottable_result
 
 
 benchmark(
-    8, 64,
+    2048, 64,
     1/8, 1/8, 1/64,
     "data/plasmid_8k.fasta",
     [ TournamentWithHopeSelection(hopeProbability=.01) ],
