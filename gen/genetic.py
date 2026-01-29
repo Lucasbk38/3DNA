@@ -6,6 +6,7 @@ from math import inf
 import statistics
 from dna.Traj3D import Traj3D
 import matplotlib.pyplot as plt
+from typing import Callable
 from dna.RotTable import RotTable
 import numpy as np
 from dna.RotTable import defaultRotTable
@@ -13,7 +14,7 @@ from json import dump as json_dump
 from json import load as json_load
 import os
 
-def genetic_algorithm(num_generations: int, generation_size: int, keepRate: float, duplicateRate: float, saltRate: float, seq_filename: str, selection: Selection, crossover: Crossover, mutation: Mutation, benchmark = False, visualisation = False, comparison = False):
+def genetic_algorithm(num_generations: int, generation_size: int, keepRate: float, duplicateRate: float, saltRate: float, seq_filename: str, selection: Selection, crossover: Crossover, mutation: Mutation, init_gen = RotTable.random, benchmark = False, visualisation = False, comparison = False):
     fitness = Fitness()
     traj3d = Traj3D(visualisation)
 
@@ -24,7 +25,7 @@ def genetic_algorithm(num_generations: int, generation_size: int, keepRate: floa
     seq = ''.join(lineList[1:])
 
     #make init generation
-    currentGeneration = [RotTable.random() for _ in range(generation_size)]
+    currentGeneration = [init_gen() for i in range(generation_size)]
     eval = [0. for _ in range(generation_size)]
 
     
@@ -101,6 +102,7 @@ def benchmark(
     selections: list[Selection] = [ ElitismSelection(), RouletteSelection(), RankSelection(), TournamentSelection() ],
     mutations: list[Mutation] = [ GaussianAdditiveMutation(), GaussianMultiplicativeMutation() ],
     crossovers: list[Crossover] = [ MeanCrossover() ],
+    init_gen=RotTable.random,
     round = 1
 ):
     best_fitness = -inf
@@ -114,7 +116,7 @@ def benchmark(
                 list_best_fitness_log_avg = np.array([0] * num_generations)
 
                 for _ in range(round):
-                    rottable, score, list_best_fitness = genetic_algorithm(num_generations, generation_size, keepRate, duplicateRate, saltRate, seq_filename, selection, crossover, mutation, True, False)
+                    rottable, score, list_best_fitness = genetic_algorithm(num_generations, generation_size, keepRate, duplicateRate, saltRate, seq_filename, selection, crossover, mutation, init_gen, True, False)
                     list_best_fitness_log_avg = list_best_fitness_log_avg + np.log(-np.array(list_best_fitness))
                     if score > best_fitness:
                         best_rottable, best_fitness = rottable, score
