@@ -4,7 +4,7 @@ from gen.fitness import *
 
 def any_rottable_result(rottable_filename : str,seq_filename: str):
     rottable = json_load(open(rottable_filename))
-    fit = Fitness()
+    fit = FitnessNorm2Last()
     traj = Traj3D(True)
     lineList = [line.rstrip('\n') for line in open(seq_filename)]
     seq = ''.join(lineList[1:])
