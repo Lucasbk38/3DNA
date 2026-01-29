@@ -1,5 +1,5 @@
 from gen.fitness import Fitness
-from gen.crossover import Crossover, MeanCrossover, FitnessWeightedMeanCrossover
+from gen.crossover import Crossover, MeanCrossover, FitnessWeightedMeanCrossover, ChooseBetweenParentsCrossover
 from gen.mutation import GaussianAdditiveMutation, GaussianMultiplicativeMutation, GaussianAdditiveDeltaMutation, Mutation, SimulatedAnnealingMutation, ThresholdMutation, GaussianAdditiveDeltaLog10FitnessAnnealedMutation
 from gen.selection import RouletteSelection, RankSelection, TournamentSelection, ElitismSelection, Selection, TournamentWithHopeSelection
 from math import inf
