@@ -38,7 +38,7 @@ class Traj3D:
     def getTraj(self) -> list:
         return self.__Traj3D
 
-    def compute(self, dna_seq: str, rot_table: RotTable, values=[-1], saveTraj=False) -> Generator[NDArray[np.float64]]:
+    def compute(self, dna_seq: str, rot_table: RotTable, values=[-1], saveTraj=False) -> Generator[NDArray[np.float64], None, None]:
         # Matrice cumulant l'ensemble des transformations géométriques engendrées par la séquence d'ADN
         total_matrix = np.eye(4)  # Identity matrix
 
