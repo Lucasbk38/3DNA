@@ -1,10 +1,12 @@
 import unittest
+import random
 import numpy as np
 from dna.RotTable import RotTable, rotTableConfig
 from gen.mutation import GaussianAdditiveMutation, GaussianAdditiveDeltaMutation, GaussianMultiplicativeMutation, SimulatedAnnealingMutation, ThresholdMutation, GaussianAdditiveDeltaLog10FitnessAnnealedMutation
 
 class TestMutations(unittest.TestCase):
     def setUp(self):
+        random.seed(42)
         np.random.seed(42)
 
         # Crée un individu de test
@@ -123,7 +125,6 @@ class TestMutations(unittest.TestCase):
 
     def test_threshold_mutator_full_probability(self):
         """Teste que l'individu mute toujours"""
-        np.random.seed(0)
         base = GaussianAdditiveMutation(sigma=1.0)
         threshold = ThresholdMutation(base, mutation_probability=1.0)
 

@@ -53,6 +53,7 @@ class TestElitismSelection(unittest.TestCase):
 
     def setUp(self):
         random.seed(0)
+        np.random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
         self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
@@ -68,6 +69,7 @@ class TestTournamentSelection(unittest.TestCase):
 
     def setUp(self):
         random.seed(0)
+        np.random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
         self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
@@ -105,6 +107,7 @@ class TestRouletteSelection(unittest.TestCase):
 
     def setUp(self):
         random.seed(0)
+        np.random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
         self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
@@ -136,6 +139,7 @@ class TestRankSelection(unittest.TestCase):
 
     def setUp(self):
         random.seed(0)
+        np.random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
         self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 
@@ -167,6 +171,7 @@ class TestTournamentWithHopeSelection(unittest.TestCase):
 
     def setUp(self):
         random.seed(0)
+        np.random.seed(0)
         self.individus = [RotTable.random() for _ in range(10)]
         self.fitness: list[float] = list(range(10))  # fitness (positive mais pas grave)
 

@@ -75,9 +75,9 @@ Pour exécuter genetic.py ou main.py, il suffit de saisir
 
 dans le terminal (ou python3, ou python).
 
-Les paramètres dans l'ordre sont le nombre de générations, la taille de la population, le pourcentage d'individus gardés, le taux de duplication, le taux de migration, le nom du fichier dans lequel est écrit le plasmide, le type de sélection, de mutation avec la probabilité de mutation et le facteur de diminution de l'écart-type, et le type de reproduction.
+Les paramètres sont, dans l'ordre, le nombre de générations, la taille de la population, le pourcentage d'individus gardés, le taux de duplication, le taux de migration, le nom du fichier dans lequel est écrit le plasmide, le type de sélection, de mutation avec la probabilité de mutation et le facteur de diminution de l'écart-type, et le type de reproduction.
 Vous pouvez vous amuser en changeant les arguments dans `main.py`.
-Vous pouvez également constater les résultats des tables de rotation en décommentant la ligne `any_rottable_result`et en renseignant le chemin vers un fichier json contenant une table de rotation et un chemin vers le fichier fasta sur lequel a été entraîné l'algorithme (Ici est prérenseigné un résultat de $3*10^{-12}$ Angstrom sur le plasmide de 8000 nucléotides)
+Vous pouvez également constater les résultats des tables de rotation en décommentant la ligne `any_rottable_result`et en renseignant le chemin vers un fichier json contenant une table de rotation et un chemin vers le fichier fasta sur lequel a été entraîné l'algorithme (Ici est prérenseigné un résultat de $3*10^{-12}$ Angstrom sur le plasmide de 8000 nucléotides et un résultat de $5*10^{-10}$ sur le plasmide de 180000 nucléotides)
 
 
 Assurez-vous d'avoir installer les modules nécessaires dans `requirements.txt`
@@ -85,7 +85,7 @@ Le score du meilleur individu, la moyenne, la médiane et l'écart type seront d
 
 
 
-Pour exécuter tous les tests, il suffit de saisir `coverage run -m pytest`
+Pour exécuter tous les tests, il suffit de saisir `converage run -m pytest`
 Pour voir le recouvrement d'un fichier, il suffit de saisir `python -m pytest tests/test_**nom_voulu**.py --cov=gen.**nom_voulu** --cov-report=term-missing`
 Assurez-vous d'avoir installer le module `pytest` et `pytest-cov`
 

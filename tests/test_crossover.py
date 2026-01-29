@@ -1,6 +1,6 @@
 import unittest
 import random
-
+import numpy as np
 from gen.crossover import MeanCrossover, FitnessWeightedMeanCrossover, ChooseBetweenParentsCrossover
 
 from dna.RotTable import RotTable
@@ -16,6 +16,7 @@ class TestCrossoverBase(unittest.TestCase):
 
     def setUp(self):
         random.seed(42)
+        np.random.seed(42)
 
         self.crossovers = [MeanCrossover(), FitnessWeightedMeanCrossover(), ChooseBetweenParentsCrossover()]
 
@@ -62,6 +63,7 @@ class TestMeanCrossover(unittest.TestCase):
 
     def setUp(self):
         random.seed(1)
+        np.random.seed(1)
         self.crossover = MeanCrossover()
         self.parents = [RotTable().random(), RotTable().random()]
 
@@ -81,6 +83,7 @@ class TestFitnessWeightedMeanCrossover(unittest.TestCase):
 
     def setUp(self):
         random.seed(0)
+        np.random.seed(0)
         self.crossover = FitnessWeightedMeanCrossover()
         self.parents = [RotTable().random(), RotTable().random()]
         self.fitness = [-10., -1.]  # -1 est le meilleur
@@ -99,6 +102,7 @@ class TestChooseBetweenParentsCrossover(unittest.TestCase):
     
     def setUp(self):
         random.seed(3)
+        np.random.seed(3)
         self.crossover = ChooseBetweenParentsCrossover()
         self.parents = [RotTable().random(), RotTable().random()]
 
