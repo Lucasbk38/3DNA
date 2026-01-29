@@ -106,7 +106,7 @@ def benchmark(
     round = 1
 ):
     best_fitness = -inf
-    best_rottable = None
+    best_rottable = RotTable()
     
     for selection in selections:
         for mutation in mutations:
