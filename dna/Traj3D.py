@@ -7,6 +7,16 @@ from mpl_toolkits.mplot3d import Axes3D
 from dna.RotTable import RotTable
 
 
+dinucleotidesComplementaryMap = {
+    "TT": "AA",
+    "GG": "CC",
+    "TC": "GA",
+    "GT": "AC",
+    "CT": "AG",
+    "TG": "CA",
+}
+
+
 class Traj3D:
     """Represents a 3D trajectory"""
 
@@ -29,7 +39,6 @@ class Traj3D:
         return self.__Traj3D
 
     def compute(self, dna_seq: str, rot_table: RotTable, values=[-1], saveTraj=False) -> Generator[NDArray[np.float64]]:
-
         # Matrice cumulant l'ensemble des transformations géométriques engendrées par la séquence d'ADN
         total_matrix = np.eye(4)  # Identity matrix
 
@@ -72,7 +81,8 @@ class Traj3D:
             if saveTraj:
                 self.__Traj3D.append(total_matrix @ self.__Traj3D[0])
 
-    def __compute_matrices(self, rot_table: RotTable, dinucleotide: str):
+    def __compute_matrices(self, rot_table: RotTable, rawDinucleotide: str):
+        dinucleotide = dinucleotidesComplementaryMap.get(rawDinucleotide, rawDinucleotide)
 
         Omega = np.radians(rot_table.getTwist(dinucleotide))
         # Create rotation matrix of theta on Z axis
@@ -83,7 +93,7 @@ class Traj3D:
                         [0, 0, 0, 1]])
 
         sigma = rot_table.getWedge(dinucleotide)
-        delta = rot_table.getDirection(dinucleotide)
+        delta = rot_table.getDirection(dinucleotide) * (1 if dinucleotide == rawDinucleotide else -1)
         alpha = np.radians(sigma)
         beta = np.radians(delta - 90)
         # Rotate of -beta on Z axis

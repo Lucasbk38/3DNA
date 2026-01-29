@@ -2,7 +2,8 @@ from json import load as json_load
 from json import dump as json_dump
 import numpy as np
 
-rotTableConfig: dict[str, list[float]] = json_load(open('./dna/table.json'))
+rawRotTableConfig: dict[str, list[float]] = json_load(open('./dna/table.json'))
+rotTableConfig = {k: rawRotTableConfig[k] for k in [ 'AA', 'CC', 'GA', 'AC', 'AG', 'CA', 'GC', 'CG', 'AT', 'TA' ]}
 defaultRotTable = {k: rotTableConfig[k][:3] for k in rotTableConfig}
 
 class RotTable:
