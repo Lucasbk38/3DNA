@@ -61,15 +61,15 @@ Le dossier 3DNA contient 3 dossier:
     - le fichier `selection.py` définit les différentes méthodes de sélections à travers des classes (**Élitisme**, **Roulette**, **Rang**, **Tournoi** et **Tournoi avec espoir**)
     - le fichier `mutation.py` définit les différents types de mutations à travers des classes (**GaussianAdditiveMutation**, **GaussianAdditiveDeltaMutation**, **GaussianMultiplicativeMutation**, **GaussianAdditiveDeltaLog10FitnessAnnealedMutation**). De plus, **SimulatedAnnealingMutation** dans mutation.py retranscrit l'idée de **recuit simulé**
     - le fichier `crossover.py` définit les différents types de croisement à travers des classes (**MeanCrossover**, **FitnessWeightedMeanCrossover**, **ChooseBetweenParentsCrossover**)
-    - le fichier `fitness.py` définit la manière d'évaluer un individu (l'opposé de la distance euclidenne entre le point départ et le point d'arrivée de la séquence d'ADN après avoir effectué les opérations de la table de rotation). On cherche à maximiser la fitness.
-    - le fichier `result_on_plasmid.py` garde la meilleure table de rototation trouvée pour un plasmide de taille 8k et 180k
+    - le fichier `fitness.py` définit la manière d'évaluer un individu (l'opposé de la distance euclidienne entre le point départ et le point d'arrivée de la séquence d'ADN après avoir effectué les opérations de la table de rotation). On cherche à maximiser la fitness.
+    - le fichier `result_on_plasmid.py` garde la meilleure table de rotation trouvée pour un plasmide de taille 8k et 180k
 
 - le dossier **tests** contient tous les tests unitaires pour `mutation.py` (`test_mutation.py`), `selection.py` (`test_selection.py`), `RotTable.py` (`test_RotTable.py` (celui de l'énoncé)) et `crossover.py` (`test_crossover.py`) afin de s'assurer un bon recouvrement du code (au delà de 80%)
 
 ## Exécution du code
 
 Pour exécuter genetic.py ou main.py, il suffit de saisir `python -m gen` dans le terminal.
-Les paramètres dans l'ordre sont le nombre de génération, la taille de la population, le pourcentage d'individus gardés, le taux de dupplication, le plasmide, le type de sélection, de mutation avec la probabilité de mutation et le facteur de diminution de l'écart-type, et le type de croisement.
+Les paramètres dans l'ordre sont le nombre de génération, la taille de la population, le pourcentage d'individus gardés, le taux de duplication, le plasmide, le type de sélection, de mutation avec la probabilité de mutation et le facteur de diminution de l'écart-type, et le type de croisement.
 Vous pouvez vous amuser en changeant les arguments dans `main.py` 
 
 Assurez-vous d'avoir installer les modules nécessaires dans `requirements.txt`
