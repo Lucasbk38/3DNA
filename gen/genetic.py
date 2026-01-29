@@ -118,7 +118,7 @@ def benchmark(
 
                 for r in range(round):
                     print(f"round {r + 1}")
-                    rottable, score, list_best_fitness = genetic_algorithm(num_generations, generation_size, keepRate, duplicateRate, saltRate, seq_filename, selection, crossover, mutation, init_gen, True, False)
+                    rottable, score, list_best_fitness = genetic_algorithm(num_generations, generation_size, keepRate, duplicateRate, saltRate, seq_filename, selection, crossover, mutation, fitness, init_gen, True, False)
                     list_best_fitness_log_avg = list_best_fitness_log_avg + np.log(-np.array(list_best_fitness))
                     if score > best_fitness:
                         best_rottable, best_fitness = rottable, score
