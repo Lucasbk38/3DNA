@@ -6,15 +6,15 @@ from gen.mutation import *
 # np.random.seed()
 
 
-# benchmark(
-#     4096, 64,
-#     1/8, 1/8, 1/64,
-#     "data/plasmid_8k.fasta",
-#     [ TournamentWithHopeSelection(hopeProbability=.01) ],
-#     [ ThresholdMutation(SimulatedAnnealingMutation(GaussianAdditiveDeltaLog10FitnessAnnealedMutation(sigma=10), key="sigma", alpha=.999), mutation_probability=.2) ],
-#     [ FitnessWeightedMeanCrossover() ],
-#     [ FitnessNorm2AvgLast2() ]
-# )
+benchmark(
+    4096, 64,
+    1/8, 1/8, 1/64,
+    "data/plasmid_8k.fasta",
+    [ TournamentWithHopeSelection(hopeProbability=.01) ],
+    [ ThresholdMutation(SimulatedAnnealingMutation(GaussianAdditiveDeltaLog10FitnessAnnealedMutation(sigma=10), key="sigma", alpha=.999), mutation_probability=.2) ],
+    [ FitnessWeightedMeanCrossover() ],
+    [ FitnessNorm2AvgLast2() ]
+)
 
 #any_rottable_result('gen/rotTableExamples/3-12.json', 'data/plasmid_8k.fasta')
-any_rottable_result('./gen/rotTableExamples/8127nucleotide_-4.316128856546181.json','data/plasmid_8k.fasta')
+# any_rottable_result('./gen/rotTableExamples/8127nucleotide_-4.316128856546181.json','data/plasmid_8k.fasta')
