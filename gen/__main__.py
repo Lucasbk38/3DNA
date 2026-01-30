@@ -7,7 +7,7 @@ from gen.mutation import *
 
 
 benchmark(
-    512, 64,
+    1024, 64,
     1/8, 1/8, 1/64,
     "data/plasmid_8k.fasta",
     [ TournamentWithHopeSelection(hopeProbability=.01) ],
